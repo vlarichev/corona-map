@@ -11,8 +11,7 @@ var mymap = L.map("mapid", {
 }).setView([51.358261, 10.373875], 6);
 
 const _mbK = "pk.eyJ1IjoidmxhZHNhbGF0IiwiYSI6ImNpdXh4cjM4YzAwMmsyb3IzMDA0aHV4a3YifQ.TiC4sHEfBVhLetC268aGEQ";
-const url = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page="
-+ "COVID-19-F%C3%A4lle_in_Deutschland";
+const url = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-F%C3%A4lle_in_Deutschland";
 
 
 const bundesGeojson = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/master/2_bundeslaender/4_niedrig.geojson";
@@ -49,7 +48,11 @@ function getLastData(){
 
 getLastData();
 
-var store = {};
+var store = {
+  deaths:0,
+  recovered:0
+
+};
 
 var daysAgo = 1;
 
@@ -90,7 +93,7 @@ function table2land(table){
         var x = zeile["bundesland\n"]
         el.innerHTML = x;
 
-        var blID = el.getElementsByTagName( 'a' ).length >0 ? el.getElementsByTagName( 'a' )[0].getAttribute("title"): el.getElementsByTagName('body')[0].innerText
+        var blID = el.getElementsByTagName( 'a' ).length >0 ? el.getElementsByTagName( 'a' )[0].getAttribute("title"): el.getElementsByTagName('body')[0].innerText;
         var resNumber = parseNumers(varLastDate);
         console.log(varLastDate)
         allVaules.push(resNumber);
@@ -99,7 +102,22 @@ function table2land(table){
     console.log(store);
     printPoints(store);
     createAreas(store);
+    getCurrentESRI();
     initLegend();
+}
+
+const esriDashboard = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true';
+
+function getCurrentESRI(){
+  function printData(data){
+    store.recovered = data.Recovered;
+    store.deaths = data.Deaths;
+    info.update();
+  }
+  fetch(esriDashboard)
+    .then(a => a.json())
+    .then(a => a.features.filter(a => a.attributes.OBJECTID == 126)[0].attributes)
+    .then(b => printData(b));
 }
 
 var allData;
@@ -206,33 +224,35 @@ var initLegend = function(){
 
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
-        this._div.innerHTML = '<h4>Erkrankte gesamt</h4><br>' 
+        this._div.innerHTML = '<h4>Erkrankte gesamt</h4>' 
+        + '<div style="font-weight: 700;">'
+        + '<div style="color: green;">Geheilt - '+ store.recovered  +' ('+ Math.round(store.recovered/store.gesamt*1000)/10 +'%)'+'</div>'
+        + '<div>Gestorben - '+ store.deaths +'</div><br><hr>'
+        + '</div>'
         + '<h3>'+ store["gesamt"] +'</h3><br>'
-        +  (props ?
-            '<b>' + props.NAME_1 + '</b><br />' + store[props.NAME_1] + ' Menschen'
-            : 'Bundesland auswählen');
+        +  (props ? '<b>' + props.NAME_1 + '</b><br />' + store[props.NAME_1] + ' Menschen' : 'Bundesland auswählen');
     };
-
+    
     info.addTo(mymap); 
 
 
     var legend = L.control({position: 'bottomright'});
 
-legend.onAdd = function (map) {
+    legend.onAdd = function (map) {
 
-    var div = L.DomUtil.create('div', 'info legend'),
-        grades = allVaules.sort(sortNumber).filter(function(el,i,a){return i===a.indexOf(el)}),
-        //grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-        labels = [];
-    // loop through our density intervals and generate a label with a colored square for each interval
-    for (var i = 0; i < grades.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' + getColor(grades[i] + 1,1000) + '"></i> ' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
-    }
+        var div = L.DomUtil.create('div', 'info legend'),
+            //grades = allVaules.sort(sortNumber).filter(function(el,i,a){return i===a.indexOf(el)}),
+            grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+            labels = [];
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < grades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getColor(grades[i] + 1, ...allVaules) + '"></i> ' +
+                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+        }
 
-    return div;
-};
+        return div;
+    };
 
 legend.addTo(mymap);
 }
@@ -311,7 +331,7 @@ function getColor(d, max) {
     layer.on({
       mouseover: highlightFeature,
       mouseout: resetHighlight,
-      click: zoomToFeature
+      click: highlightFeature
     });
   }
 
