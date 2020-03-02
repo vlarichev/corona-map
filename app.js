@@ -1,5 +1,6 @@
 import L from "leaflet";
-var parser = require('rss-parser-browser');
+import rssParser from 'rss-parser-browser';
+//var parser = require('rss-parser-browser');
 var bundesAreas = require("./germany-borders.json");
 
 var geojson;
@@ -72,7 +73,7 @@ getLastDataFromWiki();
 getRssFeed();
 function getRssFeed(){
 
-parser.parseURL(CORS_PROXY+'https://www.rki.de/SiteGlobals/Functions/RSSFeed/RSSGenerator_nCoV.xml', function(err, parsed) {
+rssParser.parseURL(CORS_PROXY+'https://www.rki.de/SiteGlobals/Functions/RSSFeed/RSSGenerator_nCoV.xml', function(err, parsed) {
   var feed = L.DomUtil.create('ul', 'feed');
   parsed.feed.entries.forEach(function(entry) {
     feed.innerHTML += `<li class="is-size-6"><b href="${entry.link}">${entry.title}</b><br><p>${entry.contentSnippet} <a href="${entry.link}">weiter lesen</a></p> </li>`;
