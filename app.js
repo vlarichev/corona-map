@@ -1,5 +1,5 @@
 import L from "leaflet";
-
+var parser = require('rss-parser-browser');
 var bundesAreas = require("./germany-borders.json");
 
 var geojson;
@@ -11,9 +11,11 @@ var mymap = L.map("mapid", {
 }).setView([51.358261, 10.373875], 6);
 
 const _mbK = "pk.eyJ1IjoidmxhZHNhbGF0IiwiYSI6ImNpdXh4cjM4YzAwMmsyb3IzMDA0aHV4a3YifQ.TiC4sHEfBVhLetC268aGEQ";
-const url = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-F%C3%A4lle_in_Deutschland";
-
+const urlWiki = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-F%C3%A4lle_in_Deutschland";
+const urlRK = "https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html";
 const bundesGeojson = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/master/2_bundeslaender/4_niedrig.geojson";
+
+const CORS_PROXY = "https://cors-anywhere.herokuapp.com/"
 
 L.tileLayer( "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",{
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>, Quellen : <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html">Rober Koch Institut</a> und <a href="https://de.wikipedia.org/wiki/COVID-19-F%C3%A4lle_in_Deutschland">Wikipedia</a>',
@@ -27,9 +29,9 @@ L.tileLayer( "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_tok
 }).addTo(mymap);
 
 
-function getLastData(){
+function getLastDataFromWiki(){
     //fetch WIKI to get Table
-    return fetch(url)
+    return fetch(urlWiki)
     .then(function(response) {
         return response.json();
     })
@@ -45,7 +47,40 @@ function getLastData(){
     });
 }
 
-getLastData();
+function getLastDataFromRK(){
+    //fetch WIKI to get Table
+    return fetch(CORS_PROXY+urlRK)
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(response) {
+      console.log(response)
+        var html_code = response["parse"]["text"]["*"];
+        var parser = new DOMParser();
+        var html = parser.parseFromString(html_code, "text/html");
+        console.log(html)
+        var tables = html.querySelectorAll(".wikitable");
+        var parsedTabe = tableToJson(tables[0]);
+        allData = parsedTabe;
+        console.log(parsedTabe)
+        table2land(parsedTabe)
+    });
+}
+
+getLastDataFromWiki();
+//getLastDataFromRK();
+getRssFeed();
+function getRssFeed(){
+
+parser.parseURL(CORS_PROXY+'https://www.rki.de/SiteGlobals/Functions/RSSFeed/RSSGenerator_nCoV.xml', function(err, parsed) {
+  var feed = L.DomUtil.create('ul', 'feed');
+  parsed.feed.entries.forEach(function(entry) {
+    feed.innerHTML += `<li class="is-size-6"><b href="${entry.link}">${entry.title}</b><br><p>${entry.contentSnippet} <a href="${entry.link}">weiter lesen</a></p> </li>`;
+  });
+  document.getElementById('feed').appendChild(feed);
+});
+   
+}
 
 var store = {
   deaths:0,
