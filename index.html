@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <meta name="description" content="Karte mit aktuellen Corona Virus Fällen in Deutschland" />
+    <meta name="keywords" content="HTML,CSS,XML,JavaScript" />
+    <meta name="author" content="Vlad Larichev" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+
+    <!-- Primary Meta Tags -->
+    <title>Karte der Corona Virusfälle in Deutschland nach Bundesländer</title>
+    <meta name="title" content="Karte der Corona Virusfälle in Deutschland nach Bundesländer">
+    <meta name="description" content="Aktuelle Karte der Virusfälle in Deutschland, visualisiert nach Bundesländern. Symptome,  Aktuelles und Informationen">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://corona.vladlarichev.com/">
+    <meta property="og:title" content="Karte der Corona Virusfälle in Deutschland nach Bundesländer">
+    <meta property="og:description" content="Aktuelle Karte der Virusfälle in Deutschland, visualisiert nach Bundesländern. Symptome,  Aktuelles und Informationen">
+    <meta property="og:image" content="https://corona.vladlarichev.com/title.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://corona.vladlarichev.com/">
+    <meta property="twitter:title" content="Karte der Corona Virusfälle in Deutschland nach Bundesländer">
+    <meta property="twitter:description" content="Aktuelle Karte der Virusfälle in Deutschland, visualisiert nach Bundesländern. Symptome,  Aktuelles und Informationen">
+    <meta property="twitter:image" content="https://corona.vladlarichev.com/title.jpg">
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+
+    
+    <style>
+        #mapid {
+            height: calc(100vh - 52px);
+            z-index: 0;
+        }
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+
+        .info h3 {
+            font-size: 22px;
+            text-align: center;
+        }
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+        .isDisabled {
+            color: currentColor;
+            cursor: not-allowed;
+            opacity: 0.5;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Karte Virusfälle Deutschland Bundesländer</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css" />
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    </head>
+
+    <body>
+        <nav class="navbar is-danger" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+                <a class="navbar-item" href="https://vladlarichev.com">
+                    Coronavirus Covid-19   
+
+                        <span class ="has-text-white-ter" id="stand"></span>
+                    
+                </a> 
+
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+                    data-target="navbarBasicExample">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+
+            <div id="navbarBasicExample" class="navbar-menu">
+                <div class="navbar-end">
+                    <a class="navbar-item">
+                        Karte
+                    </a>
+
+                    <a class="navbar-item isDisabled">
+                        Aktuelle Meldungen
+                    </a>
+
+                    <a class="navbar-item isDisabled">
+                        Symptomen
+                    </a>
+
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            Infomaterial
+                        </a>
+
+                        <div class="navbar-dropdown">
+                            <a class="navbar-item" href="https://www.bbk.bund.de/SharedDocs/Downloads/BBK/DE/Publikationen/Broschueren_Flyer/Buergerinformationen_A4/Ratgeber_Brosch.pdf?__blob=publicationFile">
+                                Ratgeber BBK
+                            </a>
+                            <!-- <a class="navbar-item">
+                                Jobs
+                            </a>
+                            <a class="navbar-item">
+                                Contact
+                            </a>-->
+                            <hr class="navbar-divider" />
+                            <a class="navbar-item isDisabled">
+                                Fehler melden
+                            </a>
+                        </div>
+                    </div>
+                    <div class="navbar-end">
+                        <div class="navbar-item">
+                          <div class="buttons" id="modal-button">
+                            <a class="button is-light">
+                              Kontakt
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </nav>
+
+        <div id="mapid"></div>
+        <section class="content">
+        </section>
+
+        <div class="modal" id="infoBox">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Coronavirus Karte</p>
+                <!--<button class="delete" id ="modal-close" aria-label="close"></button>-->
+              </header>
+              <section class="modal-card-body">
+                <div class="content">
+                    Bei allen Ideen, Fragen oder Anmerkungen gerne mich kontaktieren: <a href:"mailto:vladlarichev@gmail.com">mail</a>
+                    
+                    <ul>
+                        <li>Autor: <a href="https://vladlarichev.com">Vlad Larichev</a></li>
+                        <li>Quelle 1: <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html">Robert Koch Institut</a> </li>
+                        <li>Quelle 2: <a href="https://de.wikipedia.org/wiki/COVID-19-F%C3%A4lle_in_Deutschland">Wikipedia</a> </li>
+                        <li>Bild: Photo by CDC on Unsplash</a> </li>
+                    </ul>                    
+                </div>
+              </section>
+              <footer class="modal-card-foot">
+                <!--<button class="button is-success">Save changes</button>
+                <button class="button">Cancel</button>-->
+                Vlad Larichev © 2020
+              </footer>
+            </div>
+          </div>
+
+    </body>
+
+    </html>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

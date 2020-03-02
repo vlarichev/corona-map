@@ -1,0 +1,20 @@
+{
+  "name": "coronaapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bulma": "^0.8.0",
+    "leaflet": "^1.6.0"
+  },
+  "devDependencies": {
+    "parcel": "1.11.0"
+  },
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build --experimental-scope-hoisting --public-url . index.html",
+    "normal": "parcel build --public-url . index.html"
+  }
+}
