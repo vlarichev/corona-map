@@ -13,7 +13,6 @@ var mymap = L.map("mapid", {
 const _mbK = "pk.eyJ1IjoidmxhZHNhbGF0IiwiYSI6ImNpdXh4cjM4YzAwMmsyb3IzMDA0aHV4a3YifQ.TiC4sHEfBVhLetC268aGEQ";
 const url = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-F%C3%A4lle_in_Deutschland";
 
-
 const bundesGeojson = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/master/2_bundeslaender/4_niedrig.geojson";
 
 L.tileLayer( "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",{
@@ -41,7 +40,7 @@ function getLastData(){
         var tables = html.querySelectorAll(".wikitable");
         var parsedTabe = tableToJson(tables[0]);
         allData = parsedTabe;
-        //console.log(parsedTabe)
+        console.log(parsedTabe)
         table2land(parsedTabe)
     });
 }
@@ -51,19 +50,18 @@ getLastData();
 var store = {
   deaths:0,
   recovered:0
-
 };
 
 var daysAgo = 1;
 
 var el = document.createElement( 'html' );
 
-var SizeOfObject = (table) => Object.keys(table[0]).length-1;
+//var SizeOfObject = (table) => Object.keys(table[0]).length-1;
 
 var parseNumers = function(num){
     if (parseInt(num)) return parseInt(num);
     else return 0;
-}
+};
 
 var allVaules = [];
 
@@ -74,14 +72,14 @@ function init(){
 var arrayOfDates;
 
 function table2land(table){
-    var todayIndex = SizeOfObject(table);
+    //var todayIndex = SizeOfObject(table);
     
     console.log(table)
     arrayOfDates = Object.keys(table[0]);
     
     var lastDate = arrayOfDates[arrayOfDates.length-1 - daysAgo];
     //console.log(lastDate);
-    printDate(lastDate)
+    printDate(lastDate);
 
     for (var entry in table){
         
@@ -90,7 +88,7 @@ function table2land(table){
         var varLastDate = zeile[Object.keys(zeile)[Object.keys(zeile).length - 1 - daysAgo]]
         
         
-        var x = zeile["bundesland\n"]
+        var x = zeile["bundesland\n"];
         el.innerHTML = x;
 
         var blID = el.getElementsByTagName( 'a' ).length >0 ? el.getElementsByTagName( 'a' )[0].getAttribute("title"): el.getElementsByTagName('body')[0].innerText;
@@ -116,7 +114,7 @@ function getCurrentESRI(){
   }
   fetch(esriDashboard)
     .then(a => a.json())
-    .then(a => a.features.filter(a => a.attributes.OBJECTID == 126)[0].attributes)
+    .then(a => a.features.filter(a => a.attributes.Country_Region == "Germany")[0].attributes)
     .then(b => printData(b));
 }
 
@@ -144,13 +142,13 @@ const pointsLibrary = {
 
 
 function printPoints(lib){
-    console.log(lib);
-    for (var bl in pointsLibrary) { 
-        var coordinates = pointsLibrary[bl].coord;
-        var name = pointsLibrary[bl].name;
-        var people = lib[name];
-        createCircles(coordinates, people, name);
-    }
+  console.log(lib);
+  for (var bl in pointsLibrary) { 
+    var coordinates = pointsLibrary[bl].coord;
+    var name = pointsLibrary[bl].name;
+    var people = lib[name];
+    createCircles(coordinates, people, name);
+  }
 }
 
 
@@ -179,6 +177,10 @@ function returnSize(people){
     return Math.floor(resultRadius);
 }
 
+function returnPeople(people){
+  if (people == 1) return people + " Fall";
+  else return people + " Fälle"; 
+}
 
 function createCircles(coord, people, name) {
   var circle = L.circle(coord, {
@@ -186,7 +188,7 @@ function createCircles(coord, people, name) {
     fillColor: "#f03",
     fillOpacity: 0.5,
     radius: returnSize(people)
-  }).bindTooltip(`${people} Fälle in ${name}`, {
+  }).bindTooltip(returnPeople(people) + ` in ${name}`, {
       permanent: true,  
       direction: 'top',
       opacity: people > 0 ? 1: 0
@@ -242,7 +244,7 @@ var initLegend = function(){
 
         var div = L.DomUtil.create('div', 'info legend'),
             //grades = allVaules.sort(sortNumber).filter(function(el,i,a){return i===a.indexOf(el)}),
-            grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+            grades = [1, 5, 10, 15,  20 , 40, 80],
             labels = [];
         // loop through our density intervals and generate a label with a colored square for each interval
         for (var i = 0; i < grades.length; i++) {
