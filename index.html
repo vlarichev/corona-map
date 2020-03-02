@@ -38,6 +38,7 @@
     <style>
         #mapid {
             height: calc(100vh - 52px);
+            top:52px;
             z-index: 0;
         }
         .info {
@@ -79,7 +80,7 @@
 
 
     <body>
-        <nav class="navbar is-danger" role="navigation" aria-label="main navigation">
+        <nav class="navbar is-fixed-top is-danger" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <a class="navbar-item" href="https://vladlarichev.com">
                     Coronavirus Covid-19   
@@ -151,11 +152,29 @@
         <section>
             <div id="mapid"></div>
         </section>
-        <section class="content">
-            <h1>Karte der Coronisfälle in Deutschland</h1>
-            <h2 id="meldungen"> Aktuelle Meldungen</h2>
-            <h2 id="symptomen"> Symptomen</h2>
-            <h2 id="vorosorge"> Vorsorge</h2>
+        <section class="section">
+            <div class="content">
+
+            
+            <h1  class="title">Karte der Coronavirus Fälle in Deutschland</h1>
+            <p class="subtitle">
+                
+            </p>
+            <h2 class="title" id="meldungen"> Aktuelle Meldungen</h2>
+            <h2 class="title" id="symptomen"> Symptomen</h2>
+            <h2 class="title" id="vorsorge"> Vorsorge</h2>
+            <ul>
+                <li><a href="https://www.rki.de/SharedDocs/FAQ/NCOV2019/FAQ_Liste.html">Vorschlägen des Robert-Koch-Instituts</a></li>
+                <li><a href="https://www.infektionsschutz.de/hygienetipps/hygiene-beim-husten-und-niesen.html#c6375">Einhaltung der Husten- und Nies-Etikette</a></li>
+                <li><a href="https://www.infektionsschutz.de/haendewaschen.html">Händehygiene</a></li>
+            </ul>
+            <h3>Interview mit OA Dr. med. René Fussen</h3>
+            <p  class="subtitle">Zentralbereich für Krankenhaushygiene und Infektiologie an der Uniklinik RWTH Aachen.</p>
+            <div class="has-text-centered">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/KyJT8ndwiGM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+        </div>
         </section>
 
         <div class="modal" id="infoBox">
@@ -184,7 +203,13 @@
               </footer>
             </div>
           </div>
-
+          <footer class="footer" style="background-color:#e6dede">
+            <div class="content has-text-centered ">
+              <p>
+                Vlad Larichev © 2020. <a href="mailto:vladlarichev@gmail.com">Kontakt</a> | <a href="https://vladlarichev.com/?page_id=3">Impressum</a>
+              </p>
+            </div>
+          </footer>
 
     <script src="app.js"></script>
 </body>
