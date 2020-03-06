@@ -1,0 +1,16 @@
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Baden-Württemberg",48.537778,9.041111,1);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Bayern",48.946389,11.404167,2);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Berlin",52.502889,13.404194,3);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Brandenburg",52.459028,13.015833,4);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Bremen",53.108821, 8.805630,5);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Hamburg",53.568889,10.028889,6);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Hessen",50.608047,9.028465,7);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Mecklenburg-Vorpommern",53.7735,12.575558,8); 
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Niedersachsen",52.839842,9.076019,9);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Nordrhein-Westfalen",51.478333,7.555,10);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Rheinland-Pfalz",49.955139,7.310417,11);  
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Saarland",49.384167,6.953611,12);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Sachsen",50.929472,13.458333,13);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Sachsen-Anhalt",52.009056,11.702667,14); 
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Schleswig-Holstein",54.185556,9.822222,15);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Thüringen" },50.903333,11.026389,16);

@@ -1,0 +1,28 @@
+.chart-container {
+    height: 545px;
+    
+  }
+  #chartNav {
+    display: flex
+}
+  #info-pane {
+    position: relative;
+    top: 70px;
+    left: 10px;
+    z-index: 400;
+    padding: 1em;
+    background: white;
+  }
+
+
+  @media only screen and (min-width: 1000px) {
+    #info-pane {
+        position: absolute!important;
+    }
+    #chartNav {
+        display: none
+    }
+    .chart-container {
+        height: 545px;
+      }
+  }

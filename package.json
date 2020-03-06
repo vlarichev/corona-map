@@ -7,6 +7,9 @@
   "license": "ISC",
   "dependencies": {
     "bulma": "^0.8.0",
+    "bulma-tooltip": "^3.0.2",
+    "chart.js": "^2.9.3",
+    "clipboard": "^2.0.4",
     "leaflet": "^1.6.0",
     "rss-parser-browser": "^2.2.2"
   },
@@ -14,8 +17,8 @@
     "parcel": "1.11.0"
   },
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build --experimental-scope-hoisting --public-url . index.html",
-    "normal": "parcel build --public-url . index.html"
+    "start": "rm -rf dist/* & parcel index.html",
+    "build": "rm -rf dist/* & parcel build --experimental-scope-hoisting --public-url . index.html",
+    "normal": "rm -rf dist/* & parcel build --public-url . index.html && cd dist && http-server -o -p1234"
   }
 }

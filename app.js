@@ -1,10 +1,17 @@
 import L from "leaflet";
 import rssParser from 'rss-parser-browser';
-//var parser = require('rss-parser-browser');
+import ClipboardJS from 'clipboard';
+
+import {MapChart} from "./components/chart"
+
 var bundesAreas = require("./germany-borders.json");
+var germany = require("./germany.json");
+
+import '/node_modules/bulma-tooltip/dist/css/bulma-tooltip.min.css';
+
+new ClipboardJS('.btn');
 
 var geojson;
-
 
 var mymap = L.map("mapid", { 
     zoomControl: false,
@@ -12,14 +19,14 @@ var mymap = L.map("mapid", {
 }).setView([51.358261, 10.373875], 6);
 
 const _mbK = "pk.eyJ1IjoidmxhZHNhbGF0IiwiYSI6ImNpdXh4cjM4YzAwMmsyb3IzMDA0aHV4a3YifQ.TiC4sHEfBVhLetC268aGEQ";
-const urlWiki = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-F%C3%A4lle_in_Deutschland";
 const urlRK = "https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html";
 const bundesGeojson = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/master/2_bundeslaender/4_niedrig.geojson";
-
+const esriDashboard = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true';
 const CORS_PROXY = "https://cors-anywhere.herokuapp.com/"
+const maxRadius = 50000;
 
 L.tileLayer( "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",{
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>, Quellen : <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html">Rober Koch Institut</a> und <a href="https://de.wikipedia.org/wiki/COVID-19-F%C3%A4lle_in_Deutschland">Wikipedia</a>',
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>, Quellen : <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html">Rober Koch Institut</a> und <a href="https://commons.wikimedia.org/wiki/File:COVID-19_Outbreak_Cases_in_Germany_Kreise.svg" title="via Wikimedia Commons">Smurrayinchester</a> / <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA</a>',
     maxZoom: 18,
     id: "mapbox/light-v9",
     //id: "vladsalat/cjhc1vnul0nkw2rmvd9q91keg",
@@ -29,118 +36,81 @@ L.tileLayer( "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_tok
     mapId: "mapbox/light-v9",
 }).addTo(mymap);
 
+//var germanLayer = L.geoJSON(germany);
 
-function getLastDataFromWiki(){
-    //fetch WIKI to get Table
-    return fetch(urlWiki)
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(response) {
-        var html_code = response["parse"]["text"]["*"];
-        var parser = new DOMParser();
-        var html = parser.parseFromString(html_code, "text/html");
-        var tables = html.querySelectorAll(".wikitable");
-        var parsedTabe = tableToJson(tables[0]);
-        allData = parsedTabe;
-        console.log(parsedTabe)
-        table2land(parsedTabe)
-    });
-}
+//console.log(germanLayer)
+
+var imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/COVID-19_Outbreak_Cases_in_Germany_Kreise.svg/256px-COVID-19_Outbreak_Cases_in_Germany_Kreise.svg.png';
+    var imageBounds = [[55.05652618408209, 5.87161922454834],[47.26985931396479,15.03811264038086]];
+L.imageOverlay(imageUrl, imageBounds, {
+  opacity: 0.4
+}).addTo(mymap);
+
+var parser = new DOMParser();
 
 function getLastDataFromRK(){
-    //fetch WIKI to get Table
-    return fetch(CORS_PROXY+urlRK)
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(response) {
-      console.log(response)
-        var html_code = response["parse"]["text"]["*"];
-        var parser = new DOMParser();
-        var html = parser.parseFromString(html_code, "text/html");
-        console.log(html)
-        var tables = html.querySelectorAll(".wikitable");
-        var parsedTabe = tableToJson(tables[0]);
+  return fetch(CORS_PROXY+urlRK)
+    .then(response => response.text())
+    .then(function(response) {       
+        var html = parser.parseFromString(response, "text/html");
+        var table = html.querySelectorAll("table")[0];
+        var parsedTabe = tableToJson(table);
+        document.getElementById('stand').innerHTML = "&nbsp;" + table.previousElementSibling.innerText;
         allData = parsedTabe;
-        console.log(parsedTabe)
         table2land(parsedTabe)
     });
 }
 
-getLastDataFromWiki();
-//getLastDataFromRK();
-getRssFeed();
+function printConsole(){
+  console.log('%c Hi! 🙋‍♂️ ', 'background: #222; color: #bada55;font-size:22px;');
+  console.log('%c Liebe Entwickler, lass uns gemeinsam eine gute API dafür aufbauen! ', 'background: #222; color: #bada55;font-size:22px;');
+  console.log('%c Es wäre super z.B. ein historischen Verlauf je Bundesland dafür zu haben ', 'background: #222; color: #bada55;font-size:22px;');
+  console.log('%c Einfach eine Email an vladlarichev@gmail.com ', 'background: #222; color: #bada55;font-size:22px;');
+}
+
+(function init(){
+    getLastDataFromRK();
+    setTimeout(printConsole,0)
+    setTimeout(getRssFeed,0)
+})();
+
+
+const RSSFeed = 'https://www.rki.de/SiteGlobals/Functions/RSSFeed/RSSGenerator_nCoV.xml';
+
 function getRssFeed(){
-
-rssParser.parseURL(CORS_PROXY+'https://www.rki.de/SiteGlobals/Functions/RSSFeed/RSSGenerator_nCoV.xml', function(err, parsed) {
-  var feed = L.DomUtil.create('ul', 'feed');
-  parsed.feed.entries.forEach(function(entry) {
-    feed.innerHTML += `<li class="is-size-6"><b href="${entry.link}">${entry.title}</b><br><p>${entry.contentSnippet} <a href="${entry.link}">weiter lesen</a></p> </li>`;
+  rssParser.parseURL(CORS_PROXY+RSSFeed, function(err, parsed) {
+    var feed = L.DomUtil.create('ul', 'feed');
+    parsed.feed.entries.forEach(function(entry) {
+      feed.innerHTML += `<li class="is-size-6"><b href="${entry.link}">${entry.title}</b><br><p>${entry.contentSnippet} <a href="${entry.link}">weiter lesen</a></p> </li>`;
+    });
+    document.getElementById('feed').appendChild(feed);
   });
-  document.getElementById('feed').appendChild(feed);
-});
-   
 }
 
-var store = {
-  deaths:0,
-  recovered:0
-};
 
-var daysAgo = 1;
-
-var el = document.createElement( 'html' );
-
-//var SizeOfObject = (table) => Object.keys(table[0]).length-1;
-
-var parseNumers = function(num){
-    if (parseInt(num)) return parseInt(num);
-    else return 0;
-};
-
+var store = { deaths:0, recovered:0 };
 var allVaules = [];
-
-function init(){
-    
-}
-
-var arrayOfDates;
+var all = 0;
 
 function table2land(table){
-    //var todayIndex = SizeOfObject(table);
+    table.forEach(function(a){
+        var num = parseInt(a.fälle)
+        if(!isNaN(num)){
+            store[a.bundesland] = num;
+            all += num;
+            allVaules.push(num);
+        }
+    });
+    store.gesamt = all;
+    console.log(store)
+    setTimeout(printPoints(store),0);
     
-    console.log(table)
-    arrayOfDates = Object.keys(table[0]);
-    
-    var lastDate = arrayOfDates[arrayOfDates.length-1 - daysAgo];
-    //console.log(lastDate);
-    printDate(lastDate);
-
-    for (var entry in table){
-        
-        var zeile = table[entry]
-        
-        var varLastDate = zeile[Object.keys(zeile)[Object.keys(zeile).length - 1 - daysAgo]]
-        
-        
-        var x = zeile["bundesland\n"];
-        el.innerHTML = x;
-
-        var blID = el.getElementsByTagName( 'a' ).length >0 ? el.getElementsByTagName( 'a' )[0].getAttribute("title"): el.getElementsByTagName('body')[0].innerText;
-        var resNumber = parseNumers(varLastDate);
-        console.log(varLastDate)
-        allVaules.push(resNumber);
-        store[blID] = resNumber;
-    }
-    console.log(store);
-    printPoints(store);
-    createAreas(store);
-    getCurrentESRI();
-    initLegend();
-}
-
-const esriDashboard = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true';
+    setTimeout(createAreas(store),0);
+    setTimeout(initLegend(),0);  
+    setTimeout(getCurrentESRI(),0);
+  }
+  
+  
 
 function getCurrentESRI(){
   function printData(data){
@@ -172,44 +142,29 @@ const pointsLibrary = {
     12 : {coord: [49.384167,6.953611], name:"Saarland" },  //SL
     13 : {coord: [50.929472,13.458333], name:"Sachsen" }, //SAc
     14 : {coord: [52.009056,11.702667], name:"Sachsen-Anhalt" }, //SAn
-    15 : {coord: [54.185556,9.822222], name:"Schleswig-Holstein" },  //SH
+    15 : {coord: [54.185556,9.822222], name:"Schleswig Holstein" },  //SH
     16 : {coord: [50.903333,11.026389], name:"Thüringen" }   //Th
 } 
 
 
 function printPoints(lib){
-  console.log(lib);
   for (var bl in pointsLibrary) { 
     var coordinates = pointsLibrary[bl].coord;
     var name = pointsLibrary[bl].name;
     var people = lib[name];
-    createCircles(coordinates, people, name);
+    if(people)createCircles(coordinates, people, name);
   }
 }
 
-
-function printDate(date){
-    var dateArray = date.split('.');
-    var formatedDate = ' &nbsp; Stand <b>' + dateArray[0] + "." + dateArray[1] +  "</b>";
-    document.getElementById('stand').innerHTML = formatedDate;
-}
-
-function createAreas(store){
-    //console.log(bundesAreas,store)
-    geojson = L.geoJSON(bundesAreas, {
-        style: style,
-        onEachFeature: onEachFeature
-    }).addTo(mymap);
+function createAreas(){
+    geojson = L.geoJSON(bundesAreas, { style: style, onEachFeature: onEachFeature})
+        .addTo(mymap);
 } 
 
-const maxRadius = 50000;
 
 function returnSize(people){
-    //var min = Math.min(...allVaules);
     var max = Math.max(...allVaules);
-
     var resultRadius = maxRadius/max * people;
-    //console.log(resultRadius);
     return Math.floor(resultRadius);
 }
 
@@ -219,24 +174,23 @@ function returnPeople(people){
 }
 
 function createCircles(coord, people, name) {
-  var circle = L.circle(coord, {
-    color: "black",
-    fillColor: "#f03",
-    fillOpacity: 0.5,
-    radius: returnSize(people)
-  }).bindTooltip(returnPeople(people) + ` in ${name}`, {
+  L.circle(coord, {
+      color: "black",
+      fillColor: "#f03",
+      fillOpacity: 0.5,
+      radius: returnSize(people)
+    }).bindTooltip(returnPeople(people) + ` in ${name}`, {
       permanent: true,  
       direction: 'top',
       opacity: people > 0 ? 1: 0
-  }).addTo(mymap);
+    }).addTo(mymap);
 
   
 }
 
-
 document.getElementById('modal-button').addEventListener('click', function(event) {
     event.preventDefault();
-    var modal = document.querySelector('.modal');  // assuming you have only 1
+    var modal = document.querySelector('#modal');  // assuming you have only 1
     var html = document.querySelector('html');
     modal.classList.add('is-active');
     html.classList.add('is-clipped');
@@ -253,7 +207,6 @@ var info = L.control();
 
 var initLegend = function(){
    
-
     info.onAdd = function (map) {
         this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
         this.update();
@@ -264,11 +217,11 @@ var initLegend = function(){
     info.update = function (props) {
         this._div.innerHTML = '<h4>Erkrankte gesamt</h4>' 
         + '<div style="font-weight: 700;">'
-        + '<div style="color: green;">Geheilt - '+ store.recovered  +' ('+ Math.round(store.recovered/store.gesamt*1000)/10 +'%)'+'</div>'
-        + '<div>Gestorben - '+ store.deaths +'</div><br><hr>'
+        + '<div style="color: green;">Genesen - '+ store.recovered  +' ('+ Math.round(store.recovered/store.gesamt*1000)/10 +'%)'+'</div>'
         + '</div>'
+        + '<div>Gestorben - '+ store.deaths +'</div><br><hr>'
         + '<h3>'+ store["gesamt"] +'</h3><br>'
-        +  (props ? '<b>' + props.NAME_1 + '</b><br />' + store[props.NAME_1] + ' Menschen' : 'Bundesland auswählen');
+        +  (props ? '<b>' + props.NAME_1 + '</b><br />' + (store[props.NAME_1] ? store[props.NAME_1] :0) + ' Menschen' : 'Bundesland auswählen');
     };
     
     info.addTo(mymap); 
@@ -279,14 +232,16 @@ var initLegend = function(){
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-            //grades = allVaules.sort(sortNumber).filter(function(el,i,a){return i===a.indexOf(el)}),
-            grades = [1, 5, 10, 15,  20 , 40, 80],
-            labels = [];
+        //grades = allVaules.sort(sortNumber).filter(function(el,i,a){return i===a.indexOf(el)}),
+        grades = [1, 5, 10, 15,  20 , 40, 80, 100],
+        labels = [];
         // loop through our density intervals and generate a label with a colored square for each interval
+        var cur, next;
         for (var i = 0; i < grades.length; i++) {
-            div.innerHTML +=
-                '<i style="background:' + getColor(grades[i] + 1, ...allVaules) + '"></i> ' +
-                grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+          cur = grades[i];
+          next = grades[i + 1];
+          div.innerHTML +=
+            '<i style="background:' + getColor(cur + 1, Math.max(...allVaules)) + '"></i> ' + cur + (next ? '&ndash;' + next + '<br>' : '+');
         }
 
         return div;
@@ -316,13 +271,24 @@ function sortNumber(a, b) {
     return a - b;
   }
 
-function getColor(d, max) {
+function getColorRed(d, max) {
     return  d > max/1 ? "#800026" : 
             d > max/2 ? "#BD0026" : 
             d > max/5 ? "#E31A1C" : 
             d > max/10 ? "#FC4E2A" : 
             d > max/20 ? "#FD8D3C" : 
             d > max/50  ? "#FEB24C" : 
+            d > max/100 ? "#FED976" : "#FFEDA0";
+}
+
+function getColor(d, max) {
+    //console.log(d,max)
+    return  d > max/1 ? "#FD8D3C" : 
+            d > max/2 ? "#FD8D3C" : 
+            d > max/5 ? "#FEB24C" : 
+            d > max/10 ? "#FEB24C" : 
+            d > max/20 ? "#FED976" : 
+            d > max/50  ? "#FED976" : 
             d > max/100 ? "#FED976" : "#FFEDA0";
 }
   
@@ -360,11 +326,6 @@ function getColor(d, max) {
     }
   }
 
-
-  
-  function zoomToFeature(e) {
-    map.fitBounds(e.target.getBounds());
-  }
   function onEachFeature(feature, layer) {
     layer.on({
       mouseover: highlightFeature,
@@ -377,7 +338,7 @@ function getColor(d, max) {
 
 function tableToJson(table) {
     var data = [];
-  
+    //console.log(table)
     // first row needs to be headers
     var headers = [];
     for (var i = 0; i < table.rows[0].cells.length; i++) {
@@ -402,4 +363,68 @@ function tableToJson(table) {
   }
 
 
-  
+
+ 
+
+
+  /// Wiki
+
+  const urlWiki = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-F%C3%A4lle_in_Deutschland";
+
+
+ function getLastDataFromWiki(){
+  //fetch WIKI to get Table
+  return fetch(urlWiki)
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(response) {
+      var html_code = response["parse"]["text"]["*"];
+      //var parser = new DOMParser();
+      var html = parser.parseFromString(html_code, "text/html");
+      var tables = html.querySelectorAll(".wikitable tbody")[0];
+      //console.log(tables)
+
+      // struktur array[BundeslandID] = [werte....,null]
+      var parsedTabe = parseWiki(tables);
+      //console.log(parsedTabe)
+      var chart = new MapChart(parsedTabe, pointsLibrary);
+      chart.print();
+      
+  });
+}
+
+
+
+function parseWiki(table){
+  var wikiTable = [];
+  var c = table.rows;
+  var blId = 1;
+  for(var row in c){
+    var skipSpalte = 0;
+    if (!c[row].className && typeof(c[row]) == "object"){
+      var spalten = c[row].children;
+      //console.log(spalten)
+      wikiTable[blId]=[];
+      for (var index in spalten){
+        if(skipSpalte > 0){
+          wikiTable[blId].push(tryToParse(spalten[index].innerHTML))
+        }
+        skipSpalte++;
+      }
+      blId++;
+    }
+  } 
+  return wikiTable;
+}
+
+var daysAgo = 1;
+var arrayOfDates;
+
+function tryToParse (num){
+    if (parseInt(num)) return parseInt(num);
+    else return null;
+};
+
+
+getLastDataFromWiki();

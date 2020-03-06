@@ -90,7 +90,7 @@
                 <a class="navbar-item" href="https://vladlarichev.com">
                     Coronavirus Covid-19   
 
-                        <span class ="has-text-white-ter" id="stand"></span>
+                        <span class ="has-text-white-ter" id="stand"> </span>
                     
                 </a> 
 
@@ -108,13 +108,13 @@
                         Karte
                     </a>
 
+                    <a class="navbar-item" href="#info-pane" id="chartNav">
+                        Chart
+                    </a>
                     <a class="navbar-item" href="#meldungen">
                         Aktuelle Meldungen
                     </a>
 
-                    <a class="navbar-item" href="#symptomen">
-                        Symptome
-                    </a>
 
                     <a class="navbar-item" href="#vorsorge">
                         Vorsorge
@@ -156,6 +156,11 @@
 
         <section>
             <div id="mapid"></div>
+            <div id="info-pane" class="leaflet-bar chart-container">
+                <canvas id="myChart"></canvas>
+                <div id="chart-legends"></div>
+              </div>
+    
         </section>
         <section class="section">
             <div class="content">
@@ -182,14 +187,36 @@
             </ul>
             <h3>Interview mit OA Dr. med. René Fussen</h3>
             <p  class="subtitle">Zentralbereich für Krankenhaushygiene und Infektiologie an der Uniklinik RWTH Aachen.</p>
-            <div class="has-text-centered">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/KyJT8ndwiGM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            
+            <!--
+
+                <div class="has-text-centered">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/KyJT8ndwiGM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            -->
+                
             <h3>Diese Karte teilen</h3>
-            <script>
-                '<iframe src="https://corona.vladlarichev.com/" frameBorder="0" height="400" width="900" style="max-width: 100%;"></iframe>'
-            </script>
+            <p  class="subtitle">Sie können diese Karte gerne verwenden. Dafür kopieren Sie einfach diesen Code und fügen Sie den in Ihre HTML Seite ein</p>
+
+            <div class="has-text-centered">
+                <!-- Target -->
+                <textarea cols='60' class="textarea is-small is-primary"  id="bar">
+                    <!-- Anfang  Widget Karte Deutschland-->
+                    <iframe src="https://corona.vladlarichev.com" 
+                    style="border:0px #ffffff none;" 
+                    name="myiFrame" 
+                    scrolling="no" 
+                    frameborder="1" 
+                    marginheight="0px" marginwidth="0px" height="400px" width="600px" 
+                    allowfullscreen></iframe>
+                    <!-- Ende Widget Karte -->
+                </textarea><br>
+
+                <!-- Trigger -->
+                <button class="btn button  is-primary has-tooltip-warning has-tooltip-bottom" data-tooltip="Code in die  Zwischenablage" data-clipboard-target="#bar">
+                kopieren
+                </button>
+
+            </div>
 
         </div>
         </section>
@@ -220,6 +247,34 @@
               </footer>
             </div>
           </div>
+          
+
+          <div class="modal" id="wartung">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Wartung und Aktualisierung (03.03.2020)</p>
+                <!--<button class="delete" id ="modal-close" aria-label="close"></button>-->
+              </header>
+              <section class="modal-card-body">
+                <div class="content">
+                    Die Schnittstelle hat sich wieder geändert. <br>
+                    Damit das zukünftig nicht mehr passiert, bin ich dabei eigene Datenbank einzubinden.<br>
+                    mit eigener Datenbank wird es möglich sein, auch den <b>Verlauf</b> und die <b>Tendenzen</b> zu visualisieren.<br>
+                    Ich versuche das heute (03.03.2020) ferig zu stellen, soweit könnte die Karte falsche Zahlen anzeigen!<br>
+                    <br>
+                    Danke für Ihr Verständnis,<br>
+                    Vladislav
+
+                </div>
+              </section>
+              <footer class="modal-card-foot">
+                <!--<button class="button is-success">Save changes</button>
+                <button class="button">Cancel</button>-->
+                Vlad Larichev © 2020
+              </footer>
+            </div>
+          </div>
           <footer class="footer" style="background-color:#e6dede">
             <div class="content has-text-centered ">
               <p>
@@ -228,7 +283,8 @@
             </div>
           </footer>
 
-    <script src="app.js"></script>
+              <script src="app.js"></script>
+          
 </body>
 
 </html>
