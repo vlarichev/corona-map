@@ -13,7 +13,8 @@ export class MapChart {
             var labels = [];
             data[1].forEach(a => labels.push(""));
             console.log(labels)
-            return labels;
+            var newL = labels.slice(0,labels.length-2)
+            return newL;
         };
         function createDataSet(name, data){
             var _color = getRandomColor();
@@ -50,10 +51,18 @@ export class MapChart {
                     datasets: returnDataSet()
                 },
                 options: {
+                    title: {
+                        display: true,
+                        text: 'Coronafälle pro Tag'
+                    },
                     responsive: true,
                     //hover: {mode: null},
                     maintainAspectRatio: false,
-                    legend: { display: true },
+                    legend: { 
+                        display: true,
+                        position: 'bottom',
+                        align: "start"
+                    },
                     scales: {
                         yAxes: [{
                             ticks: { beginAtZero: true }

@@ -11,6 +11,7 @@
     "chart.js": "^2.9.3",
     "clipboard": "^2.0.6",
     "leaflet": "^1.6.0",
+    "leaflet-kmz": "^0.3.8",
     "parcel-plugin-static-files-copy": "^2.3.1",
     "rss-parser-browser": "^2.2.2"
   },

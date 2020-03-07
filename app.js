@@ -1,7 +1,7 @@
 import L from "leaflet";
 import rssParser from 'rss-parser-browser';
 import ClipboardJS from 'clipboard';
-
+import KMZParser from  'leaflet-kmz';
 import {MapChart} from "./components/chart"
 
 var bundesAreas = require("./germany-borders.json");
@@ -15,7 +15,8 @@ var geojson;
 
 var mymap = L.map("mapid", { 
     zoomControl: false,
-    scrollWheelZoom: false
+    //scrollWheelZoom: false,
+    //doubleClickZoom: false,
 }).setView([51.358261, 10.373875], 6);
 
 const _mbK = "pk.eyJ1IjoidmxhZHNhbGF0IiwiYSI6ImNpdXh4cjM4YzAwMmsyb3IzMDA0aHV4a3YifQ.TiC4sHEfBVhLetC268aGEQ";
@@ -39,12 +40,14 @@ L.tileLayer( "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_tok
 //var germanLayer = L.geoJSON(germany);
 
 //console.log(germanLayer)
-
+/*
 var imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/COVID-19_Outbreak_Cases_in_Germany_Kreise.svg/256px-COVID-19_Outbreak_Cases_in_Germany_Kreise.svg.png';
     var imageBounds = [[55.05652618408209, 5.87161922454834],[47.26985931396479,15.03811264038086]];
 L.imageOverlay(imageUrl, imageBounds, {
   opacity: 0.4
 }).addTo(mymap);
+*/
+
 
 var parser = new DOMParser();
 
@@ -110,9 +113,38 @@ function table2land(table){
     setTimeout(getCurrentESRI(),0);
   }
   
-  
+  /*
+  OBJECTID: 64
+Province_State: "San Diego County, CA"
+Country_Region: "US"
+Last_Update: 1583440383000
+Lat: 32.7157
+Long_: -117.1611
+Confirmed: 3
+Deaths: 0
+Recovered: 1
+*/ 
+
+Confirmed: 67666
+Deaths: 2959
+Recovered: 43468
+
+var cityContainer =[]; 
 
 function getCurrentESRI(){
+  function printCity(city){
+    var coord = [city.Lat, city.Long_];
+    cityContainer.push(L.circle(coord, {
+      color: "black",
+      fillColor: "#f03",
+      fillOpacity: 0.1,
+      radius: returnSize(city.Confirmed)
+    }).bindTooltip(`${city.Country_Region}:<br>` + returnPeople(city.Confirmed) + `<br> ${city.Recovered} geheilt<br> ${city.Deaths} Verstorben`, {
+      permanent: true,  
+      direction: 'top',
+      opacity: city.Confirmed > 0 ? 1: 0
+    }))
+  }
   function printData(data){
     store.recovered = data.Recovered;
     store.deaths = data.Deaths;
@@ -120,8 +152,17 @@ function getCurrentESRI(){
   }
   fetch(esriDashboard)
     .then(a => a.json())
-    .then(a => a.features.filter(a => a.attributes.Country_Region == "Germany")[0].attributes)
-    .then(b => printData(b));
+    .then(function(a){
+      console.log(a.features)
+     a.features.forEach(city => printCity(city.attributes));
+     
+     return a.features.filter(a => a.attributes.Country_Region == "Germany")[0].attributes;
+    })
+    .then(b => printData(b))
+    .then(function(){
+      var cities = L.layerGroup(cityContainer);
+      control.addBaseLayer(cities, "Weltweit");
+    } );
 }
 
 var allData;
@@ -146,6 +187,8 @@ const pointsLibrary = {
     16 : {coord: [50.903333,11.026389], name:"Thüringen" }   //Th
 } 
 
+var Bundesländer = [];
+var kommunenGroup;
 
 function printPoints(lib){
   for (var bl in pointsLibrary) { 
@@ -156,9 +199,14 @@ function printPoints(lib){
   }
 }
 
+
 function createAreas(){
     geojson = L.geoJSON(bundesAreas, { style: style, onEachFeature: onEachFeature})
-        .addTo(mymap);
+    
+    Bundesländer.push(geojson);
+    kommunenGroup = L.layerGroup(Bundesländer);
+    kommunenGroup.addTo(mymap);
+    control.addBaseLayer(kommunenGroup, "Bundesländer");
 } 
 
 
@@ -174,18 +222,17 @@ function returnPeople(people){
 }
 
 function createCircles(coord, people, name) {
-  L.circle(coord, {
+  Bundesländer.push(L.circle(coord, {
       color: "black",
       fillColor: "#f03",
       fillOpacity: 0.5,
       radius: returnSize(people)
-    }).bindTooltip(returnPeople(people) + ` in ${name}`, {
+    }).bindTooltip(`${name} : ${people} ` , {
       permanent: true,  
       direction: 'top',
       opacity: people > 0 ? 1: 0
-    }).addTo(mymap);
+    }))
 
-  
 }
 
 document.getElementById('modal-button').addEventListener('click', function(event) {
@@ -215,13 +262,13 @@ var initLegend = function(){
 
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
-        this._div.innerHTML = '<h4>Erkrankte gesamt</h4>' 
+        this._div.innerHTML = '<h4>Erkrankte in Deutschland</h4>' 
         + '<div style="font-weight: 700;">'
         + '<div style="color: green;">Genesen - '+ store.recovered  +' ('+ Math.round(store.recovered/store.gesamt*1000)/10 +'%)'+'</div>'
         + '</div>'
         + '<div>Gestorben - '+ store.deaths +'</div><br><hr>'
         + '<h3>'+ store["gesamt"] +'</h3><br>'
-        +  (props ? '<b>' + props.NAME_1 + '</b><br />' + (store[props.NAME_1] ? store[props.NAME_1] :0) + ' Menschen' : 'Bundesland auswählen');
+        +  (props ? '<b>' + props.NAME_1 + '</b><br />' + (store[props.NAME_1] ? store[props.NAME_1] :0) + ' Kranke gemeldet' : 'Bundesland auswählen');
     };
     
     info.addTo(mymap); 
@@ -428,3 +475,51 @@ function tryToParse (num){
 
 
 getLastDataFromWiki();
+
+
+var control = L.control.layers(null, null, { collapsed:false }).addTo(mymap);
+
+//add Googkle Map With cities
+var kmzParser = new L.KMZParser({
+  onKMZLoaded: function(layer, name) {
+    var gLayer = layer;
+    gLayer.options.attribution = "<a href='https://www.google.com/maps/d/u/0/viewer?mid=1QvEWEo7pNQKxts6N-IT78g9NC6kOdFna&hl=en_US&ll=50.20862880313433%2C10.379803594108807&z=8&fbclid=IwAR0qySc2ukUJwog3FSfHwxVG2RUqUkvXsre5FsmCrP3f_KHBRArc_nX2mII'>Google myMaps</a>";
+    control.addBaseLayer(gLayer, "Gemeldete Städte");
+    
+    console.log(gLayer);
+    
+  }
+});
+
+kmzParser.load(CORS_PROXY + 'https://www.google.com/maps/d/u/0/kml?mid=1QvEWEo7pNQKxts6N-IT78g9NC6kOdFna&lid=6WQl1QwoPOI');
+
+
+const infoBoard = document.getElementById("info-pane");
+const infoArray = document.getElementsByClassName("info");
+
+var show = (el) =>  el.style.display = "block";
+var hide = (el) => el.style.display = "none";
+
+function showKommune(){
+  show(infoBoard);
+  for (var legend in infoArray){
+    if(typeof(infoArray[legend])== 'object') show(infoArray[legend]);
+  }
+}
+
+function hideKommune(){
+  hide(infoBoard);
+  for (var legend in infoArray){
+    if(typeof(infoArray[legend])== 'object') hide(infoArray[legend]);
+  }
+}
+
+var showWeltweit = () =>  hideKommune();
+var showCity = () =>  hideKommune();
+
+mymap.on('baselayerchange', function(layer){
+  if (layer.name === "Bundesländer") showKommune();
+  else if(layer.name === "Weltweit") showWeltweit();
+  else if(layer.name === "Gemeldete Städte") showCity();
+})
+
