@@ -6,7 +6,7 @@ export class MapChart {
     constructor(data,store) {
         this.data = data;
         function returnOrgange(a){
-            return 
+            return true
         }
         function getRandomColor(a) {
             var o = Math.round, r = Math.random, s = 255, alpha = a;
@@ -16,7 +16,8 @@ export class MapChart {
             var labels = [];
             data[1].forEach(a => labels.push(""));
             console.log(labels)
-            var newL = labels.slice(0,labels.length-4)
+            var newL = labels.slice(0,labels.length-3)
+            //newL[newL.length-2] = ((new Date()).getDate()).toString();
             return newL;
         };
         function createDataSet(name, data){
@@ -61,7 +62,7 @@ export class MapChart {
                 options: {
                     title: {
                         display: true,
-                        text: 'Coronafälle pro Tag (RKI)'
+                        text: 'Coronafälle pro Tag (nach RKI)'
                     },
                     responsive: true,
                     //hover: {mode: null},
@@ -72,7 +73,8 @@ export class MapChart {
                         align: "start",
                         labels: {
                             usePointStyle : false,
-                            boxWidth: 10
+                            boxWidth: 10,
+                            
                         }
                     },
                     scales: {
@@ -81,7 +83,12 @@ export class MapChart {
                             ticks: { beginAtZero: true }
                         }],
                         xAxes: [{
-							stacked: true,
+                            stacked: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Tage",
+                                padding: 1
+                            }
 						}]
                     }
                 }

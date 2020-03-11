@@ -6,49 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="keywords" content="HTML,CSS,XML,JavaScript" />
     <meta name="author" content="Vlad Larichev" />
-    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
-    <!--
-Touch Icon Generator BY daik.de
-http://www.web-stuebchen.de
-Lizenz: GNU General Public License
-Copyright: 2014 - 2020 Stephan Heller [daik.de] <heller@daik.de>
--->
-<link rel="shortcut icon" type="image/x-icon" href="/_icons/favicon.ico">
-<link rel="icon" type="image/x-icon" href="/_icons/favicon.ico">
-<link rel="icon" type="image/gif" href="/_icons/favicon.gif">
-<link rel="icon" type="image/png" href="/_icons/favicon.png">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon.png">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-57x57.png" sizes="57x57">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-60x60.png" sizes="60x60">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-72x72.png" sizes="72x72">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-76x76.png" sizes="76x76">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-114x114.png" sizes="114x114">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-120x120.png" sizes="120x120">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-128x128.png" sizes="128x128">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-144x144.png" sizes="144x144">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-152x152.png" sizes="152x152">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-180x180.png" sizes="180x180">
-<link rel="apple-touch-icon" href="/_icons/apple-touch-icon-precomposed.png">
-<link rel="icon" type="image/png" href="/_icons/favicon-16x16.png" sizes="16x16">
-<link rel="icon" type="image/png" href="/_icons/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="/_icons/favicon-96x96.png" sizes="96x96">
-<link rel="icon" type="image/png" href="/_icons/favicon-160x160.png" sizes="160x160">
-<link rel="icon" type="image/png" href="/_icons/favicon-192x192.png" sizes="192x192">
-<link rel="icon" type="image/png" href="/_icons/favicon-196x196.png" sizes="196x196">
-<meta name="msapplication-TileImage" content="/_icons/win8-tile-144x144.png">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-navbutton-color" content="#ffffff">
-<meta name="application-name" content="CORONA"/>
-<meta name="msapplication-tooltip" content="CORONA"/>
-<meta name="apple-mobile-web-app-title" content="CORONA"/>
-<meta name="msapplication-starturl" content="https://corona.vladlarichev.com/"/>
-<meta name="msapplication-square70x70logo" content="/_icons/win8-tile-70x70.png">
-<meta name="msapplication-square144x144logo" content="/_icons/win8-tile-144x144.png">
-<meta name="msapplication-square150x150logo" content="/_icons/win8-tile-150x150.png">
-<meta name="msapplication-wide310x150logo" content="/_icons/win8-tile-310x150.png">
-<meta name="msapplication-square310x310logo" content="/_icons/win8-tile-310x310.png">
-<meta name="msapplication-square310x310logo" content="/_icons/win8-tile-310x310.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="_icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="_icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="_icons/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
 
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="canonical" href="https://corona.vladlarichev.com/" />
@@ -235,7 +198,7 @@ Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, 
             <h2 class="title" id="meldungen">Live Karte der Coronavirus Fälle: Aktuelle Meldungen</h2>
             <p  class="subtitle">Das Robert Koch-Institut zu COVID-19 (Coronavirus SARS-CoV-2)</p>
             <div id="feed">
-                <button class="button" id="lade">Letzte Meldungen abrufen?</button>
+                <button class="button" id="lade">Letzte Meldungen abrufen?</button> oder zurück <a href="#mapid">zur Karte</a>
             </div>
             
             <h2 class="title" id="symptomen"> Symptome bei Corona Virus</h2>
@@ -261,10 +224,23 @@ Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, 
             <h3>Über diese Karte und FAQ</h3>
             <p class="subtitle">Bedienung, Quellen und Hinweise</p>
 
-            <p>Diese Karte visualisiert die akteulle Daten, die sie auch einzeln bei Robert Koch Institut und der WHO Abfragen können. </p>
-            <p>Die "gefährdete Bereiche" werden auf der Karte Live aus der Städte berechnet. Dabei werden nur die Städte berücksichtigt, jeder einzeln. Die Summe der Fälle wird dabei nicht berücksichtigt. </p>
-            <p>Die Charts stellen den Tagesverlauf der Corona Virus Fälle dar, und werden aus Summe der Fälle pro Bundesländ gebildet</p>
-            <p>Bei Fragen oder Anmerkungen können Sie gerne sich auf mich wenden. Alle Kontaktinformationen finden Sie im Reicher "Kontakt"</p>
+            <p>
+                Diese Seite verfolgt das Ziel Euch über den aktuellsten Stand für Deutschland und den Bundesländern zu informieren. 
+            </p>
+            <p>
+                Dabei werden die letzten geprüften Zahlen vom Robert Koch Institut  (RKI) und der Weltgesundheitsorganisation WHO verwendet. Außerdem werden die Hotspots berechnet, die aus den gemeldeten Städten abgeleitet werden. (können rechts abgeschaltet werden)
+            </p>
+            <p>
+                Die Daten werden automatisch bei jedem Abruf aktualisiert und zeigen nur den Stand, den WHO und RKI melden. Einzelne neue Fälle können erst mit entsprechender Aktualisierung der Quellen berücksichtigt werden.  
+            </p>
+            <p>
+                Der Entwickler ist für alle Ideen und Vorschläge, wie man die Anwendung noch informativer gestalten könnte offen. Dafür ist ein Knopf "Kontakt" mit allen Kontaktinformationen vorgesehen.
+            </p>
+            <p>
+                ps. Die Anwendung wird zurzeit privat von einem Entwickler aufgebaut, der gerne nach Mitwirkenden sucht (Texte, Grafiken und natürlich Entwickler). Für die Entwickler wird der Quellcode in wenigen Tagen auf Github veröffentlicht 
+                Da die Anwendung noch auf privatem Server gehostet ist, kann es passieren, dass die teilweise ausgelastet ist
+            </p>
+            
             <h3>Diese Live Karte auf eigener Seite teilen</h3>
             <p  class="subtitle">Sie können diese Live Karte gerne selber verwenden. Dafür kopieren Sie einfach diesen Code und fügen Sie den in Ihre HTML / Wordpress Seite ein</p>
 

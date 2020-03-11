@@ -1,3 +1,4 @@
 User-Agent: *
 Allow: /
-
+Sitemap: https://corona.vladlarichev.com/sitemap.xml
+Sitemap: https://corona.vladlarichev.com/image-sitemap.xml

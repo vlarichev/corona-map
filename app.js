@@ -1,4 +1,5 @@
 
+import "./serviceWorker";
 import "./css/style.css";
 import L from "leaflet";
 import  './node_modules/bulma-pageloader/dist/css/bulma-pageloader.min.css';
@@ -46,7 +47,7 @@ const normZoom = 6;
 var mymap = L.map("mapid", { 
     zoomControl: false,
     maxZoom: 9,
-    minZoom:6,
+    minZoom:3,
     //scrollWheelZoom: false,
     //doubleClickZoom: false,
 }).setView(MapCenter, normZoom);
@@ -201,11 +202,10 @@ function getCurrentESRI(){
      return a.features.filter(a => a.attributes.Country_Region == "Germany")[0].attributes;
     })
     .then(b => printData(b))
-    /*
     .then(function(){
       var cities = L.layerGroup(cityContainer);
       control.addBaseLayer(cities, "Weltweit");
-    } );*/
+    } );
     loadingDone();
 }
 
@@ -248,12 +248,12 @@ function createAreas(){
     geojson = L.geoJSON(bundesAreas, { 
       style: style, 
       onEachFeature: onEachFeature
-    })
+    });
     
     Bundesländer.push(geojson);
     kommunenGroup = L.layerGroup(Bundesländer);
     kommunenGroup.addTo(mymap);
-    //control.addBaseLayer(kommunenGroup, "Bundesländer");
+    control.addBaseLayer(kommunenGroup, "Bundesländer");
 } 
 
 
@@ -281,12 +281,11 @@ function createCircles(coord, people, name) {
       weight: 1
     })
     .bindTooltip(`${name} : ${krank}` + todSpan , {
-      permanent: true,  
+      permanent: true,
       direction: 'top',
-      opacity: krank > 0 ? 1: 0
+      //opacity: krank > 0 ? 0.8: 0
     })
-    )
-
+    );
 }
 
 document.getElementById('modal-button').addEventListener('click', function(event) {
@@ -317,14 +316,16 @@ var initLegend = function(){
     // method that we will use to update the control based on feature properties passed
     info.update = function (props) {
 
-        this._div.innerHTML = '<h4>Erkrankte in Deutschland</h4>' 
+        this._div.innerHTML = 
+        '<h4>Erkrankte in Deutschland:</h4>' 
+        + '<div style="font-size:smaller;">Quelle WHO, weicht ggf. von RKI ab </div>'
         + '<div style="font-weight: 700;"><br>'
         + '<h3>'+ store.gesamt +'</h3><br>'
         + '<div style="color: green;">Genesen - '+ store.recovered  +' ('+ Math.round(store.recovered/store.gesamt*1000)/10 +'%)'+'</div>'
         + '</div>'
         + '<div>Gestorben - '+ store.deaths +'</div><br>'
+        + '<div>Robert Koch Institut:</div>'
         +  (props ? '<b>' + props.NAME_1 + '</b><br />' + (store[props.NAME_1] ? store[props.NAME_1]["krank"] :0) + ' Kranke gemeldet' : 'Bundesland auswählen')
-        + '<div style="font-size:smaller;">*Quelle WHO 2020</div>'
     };
     
     info.addTo(mymap); 
