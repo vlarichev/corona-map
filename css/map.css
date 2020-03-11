@@ -8,16 +8,27 @@
   #info-pane {
     position: relative;
     top: 70px;
-    left: 10px;
-    z-index: 400;
+    z-index: 10;
     padding: 1em;
     background: white;
   }
+/* 
+  .leaflet-control-layers-expanded .leaflet-control-layers-list {
+    font-size: medium;
+    width: 157px
+    }*/
 
+    #mapid {
+      height: calc(100vh - 66px);
+      top:66px;
+      z-index: 0;
+  }
 
   @media only screen and (min-width: 1000px) {
+
     #info-pane {
         position: absolute!important;
+        left: 10px;
     }
     #chartNav {
         display: none
@@ -25,4 +36,65 @@
     .chart-container {
         height: 545px;
       }
+  }
+  @media only screen and (max-width: 900px) {
+    .info.leaflet-control{
+      font-size: smaller;
+    }
+  }
+
+  
+
+  .blinking {
+    -webkit-animation: 2s blink ease infinite;
+    -moz-animation: 2s blink ease infinite;
+    -ms-animation: 2s blink ease infinite;
+    -o-animation: 2s blink ease infinite;
+    animation: 2s blink ease infinite;
+    
+  }
+  
+  @keyframes "blink" {
+    from, to {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  
+  @-moz-keyframes blink {
+    from, to {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  
+  @-webkit-keyframes "blink" {
+    from, to {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  
+  @-ms-keyframes "blink" {
+    from, to {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  
+  @-o-keyframes "blink" {
+    from, to {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
   }

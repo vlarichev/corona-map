@@ -13,4 +13,4 @@ INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Saarland",49.384167,6.95
 INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Sachsen",50.929472,13.458333,13);
 INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Sachsen-Anhalt",52.009056,11.702667,14); 
 INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Schleswig-Holstein",54.185556,9.822222,15);
-INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Thüringen" },50.903333,11.026389,16);
+INSERT INTO `city`(`name`, `lon`, `lat`, `id`) VALUES ("Thüringen" },50.903333,11.026389,16);  
