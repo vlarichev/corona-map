@@ -102,15 +102,12 @@
     <body>
         <nav class="navbar is-fixed-top is-danger" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <a class="navbar-item" href="https://vladlarichev.com">
-                    LiveCorona Map.    
-
-                        <span class ="has-text-white-ter" id="stand"> </span>
+                <span class="navbar-item">Live Corona Karte. <span class ="has-text-white-ter" id="stand"> </span>
                         <svg height="50" width="50" class="blinking">
                             <circle cx="14" cy="27" r="5" fill="red" />
                           </svg> 
                     
-                </a> 
+                </span> 
 
                 <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
                     data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
@@ -227,9 +224,7 @@ Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, 
             <p>
                 Diese Seite verfolgt das Ziel Euch über den aktuellsten Stand für Deutschland und den Bundesländern zu informieren. 
             </p>
-            <p>
-                Dabei werden die letzten geprüften Zahlen vom Robert Koch Institut  (RKI) und der Weltgesundheitsorganisation WHO verwendet. Außerdem werden die Hotspots berechnet, die aus den gemeldeten Städten abgeleitet werden. (können rechts abgeschaltet werden)
-            </p>
+
             <p>
                 Die Daten werden automatisch bei jedem Abruf aktualisiert und zeigen nur den Stand, den WHO und RKI melden. Einzelne neue Fälle können erst mit entsprechender Aktualisierung der Quellen berücksichtigt werden.  
             </p>
@@ -241,21 +236,19 @@ Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, 
                 Da die Anwendung noch auf privatem Server gehostet ist, kann es passieren, dass die teilweise ausgelastet ist
             </p>
             
+            <h3>Quellen</h3>
+            <p>
+                Dabei werden die letzten geprüften Zahlen vom Robert Koch Institut  (RKI) und der Weltgesundheitsorganisation WHO verwendet. Außerdem werden die Hotspots berechnet, die aus den gemeldeten Städten abgeleitet werden. (können rechts abgeschaltet werden)
+            </p>
+            
             <h3>Diese Live Karte auf eigener Seite teilen</h3>
             <p  class="subtitle">Sie können diese Live Karte gerne selber verwenden. Dafür kopieren Sie einfach diesen Code und fügen Sie den in Ihre HTML / Wordpress Seite ein</p>
 
             <div class="has-text-centered">
+
                 <!-- Target -->
                 <textarea cols='60' class="textarea is-small is-primary"  id="bar">
-                    <!-- Anfang  Widget Karte Deutschland-->
-                    <iframe  loading="lazy" src="https://corona.vladlarichev.com" 
-                    style="border:0px #ffffff none;" 
-                    name="myiFrame" 
-                    scrolling="no" 
-                    frameborder="1" 
-                    marginheight="0px" marginwidth="0px" height="400px" width="600px" 
-                    allowfullscreen></iframe>
-                    <!-- Ende Widget Karte -->
+                    
                 </textarea><br>
                 <div class="has-text-centered">
                     <img loading="lazy" src="titleOld.jpg" title="corona Virus Karte live nach Bundesländer" alt="corona Virus Karte live nach Bundesländer" style="height: 100px;">

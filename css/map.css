@@ -41,6 +41,12 @@
     .info.leaflet-control{
       font-size: smaller;
     }
+    span#stand {
+      position: fixed;
+      bottom: 50px;
+      color: gray!important;
+      left: 0px;
+    }
   }
 
   

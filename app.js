@@ -1,36 +1,30 @@
 
-import "./serviceWorker";
+//import "./serviceWorker";
 import "./css/style.css";
 import L from "leaflet";
 import  './node_modules/bulma-pageloader/dist/css/bulma-pageloader.min.css';
 import "./components/leaflet-heat";
 
-import rssParser from 'rss-parser-browser';
 import ClipboardJS from 'clipboard';
 import KMZParser from  'leaflet-kmz';
 import {MapChart} from "./components/chart"
 
+import getRssFeed from "./components/rssFeed"
+
 import {simpleCache} from "./components/simpleCache";
 
-//import  bulmaPageloader from "bulma-pageloader";
 
-const _mbK = "pk.eyJ1IjoidmxhZHNhbGF0IiwiYSI6ImNpdXh4cjM4YzAwMmsyb3IzMDA0aHV4a3YifQ.TiC4sHEfBVhLetC268aGEQ";
+const CORS_PROXY = process.env.CORS_PROXY;
+const _mbK = process.env.MAPBOX_KEY;
+
 const urlRK = "https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html";
 const bundesGeojson = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/master/2_bundeslaender/4_niedrig.geojson";
 const esriDashboard = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true';
-const CORS_PROXY = "https://rocky-lowlands-03275.herokuapp.com/"
+
+
 const maxRadius = 50000;
 
-//var cacheControl = new simpleCache();
-
 const gemeldeteCity = false;
-
-var prod = true;
-
-if (process.env.NODE_ENV === 'development') { // Or, `process.env.NODE_ENV !== 'production'`
-  prod = false;
-}
-console.info("prod - " + prod);
 
 
 var bundesAreas = require("./germany-borders.json");
@@ -59,10 +53,12 @@ const loader = document.getElementById("loader");
 var loadedCount = 0;
 var minWait = 3000;
 const loadedElements = 2; 
+
 function loadingDone(){
   loadedCount ++;
   loader.classList.remove('is-active');
-  if(loadedCount === loadedElements)loader.classList.remove('is-active');
+  //if(loadedCount === loadedElements)
+  loader.classList.remove('is-active');
 }
 
 setTimeout(loadingDone, minWait)
@@ -115,32 +111,7 @@ function printConsole(){
   console.log('%c Einfach eine Email an vladlarichev@gmail.com ', 'background: #222; color: #bada55;font-size:22px;');
 }
 
-(function init(){
-  //if(prod){
 
-    updateDate()
-    printConsole()
-    getLastDataFromRK();
-    //if(prod) setTimeout(getRssFeed,1000)
- // }
-})();
-
-
-const RSSFeed = 'https://www.rki.de/SiteGlobals/Functions/RSSFeed/RSSGenerator_nCoV.xml';
-
-const ladeKnopf = document.getElementById('lade');
-ladeKnopf.addEventListener('click', getRssFeed);
-
-function getRssFeed(){
-  ladeKnopf.style.display = "none";
-  rssParser.parseURL(CORS_PROXY+RSSFeed, function(err, parsed) {
-    var feed = L.DomUtil.create('ul', 'feed');
-    parsed.feed.entries.forEach(function(entry) {
-      feed.innerHTML += `<li class="is-size-6"><b href="${entry.link}">${entry.title}</b><br><p>${entry.contentSnippet} <a href="${entry.link}">weiter lesen</a></p> </li>`;
-    });
-    document.getElementById('feed').appendChild(feed);
-  });
-}
 
 
 var store = { deaths:0, recovered:0 };
@@ -149,10 +120,13 @@ var all = 0;
 
 function table2land(table){
     table.forEach(function(a){
-        var krank = parseInt(a.fälle);
-        var tod = parseInt(a.todesfälle);
+        
+        // UPD RKI institut hat wieder die Tabelle verändert: jetzt-> key: "688 (3)"
+        var val = a[Object.keys(a)[1]].split(" ");
+        var krank = parseInt(val[0].replace(".",""));
+        var tod = parseInt(val[1] ? val[1].replace("(","").replace(")",""): 0);
+//        console.log(a)  
         if(!isNaN(krank)){
-          //console.log(a.bundesland)  
           store[a.bundesland] = {
             "krank" : krank,
             "tod"   : tod
@@ -165,8 +139,6 @@ function table2land(table){
     console.log(store)
     setTimeout(printPoints(store),0);
     setTimeout(createAreas(store),0);
-    setTimeout(initLegend(),0);  
-    setTimeout(getCurrentESRI(),0);
   }
   
 
@@ -181,7 +153,7 @@ function getCurrentESRI(){
       fillOpacity: 0.1,
       radius: returnSize(city.Confirmed)
     }).bindTooltip(`${city.Country_Region}:<br>` + returnPeople(city.Confirmed) + `<br> ${city.Recovered} geheilt<br> ${city.Deaths} Verstorben`, {
-      permanent: false,  
+      permanent: true,  
       direction: 'top',
       opacity: city.Confirmed > 0 ? 1: 0
     }))
@@ -189,25 +161,28 @@ function getCurrentESRI(){
   function printData(data){
     store.recovered = data.Recovered;
     store.deaths = data.Deaths;
-    //console.log(data);
     store.gesamt = data.Confirmed;
+    console.log(data);
     info.update();
   }
-  fetch(esriDashboard)
-    .then(a => a.json())
-    .then(function(a){
-      //console.log(a.features)
-     a.features.forEach(city => printCity(city.attributes));
+
+
+    fetch("https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true")
+    .then(a =>  a.json())
+    .then((b) => {
+     console.log(b)
+     b.features.forEach(city => printCity(city.attributes));
      
-     return a.features.filter(a => a.attributes.Country_Region == "Germany")[0].attributes;
+     return b.features.filter(b => b.attributes.Country_Region == "Germany")[0].attributes;
     })
     .then(b => printData(b))
     .then(function(){
       var cities = L.layerGroup(cityContainer);
       control.addBaseLayer(cities, "Weltweit");
-    } );
-    loadingDone();
-}
+    } )
+  loadingDone();
+  }
+  
 
 var allData;
 
@@ -329,15 +304,18 @@ var initLegend = function(){
     };
     
     info.addTo(mymap); 
+}
 
+var legend = L.control({position: 'bottomright'});
 
-    var legend = L.control({position: 'bottomright'});
+function initColormap(){
+
 
     legend.onAdd = function (map) {
 
         var div = L.DomUtil.create('div', 'info legend'),
         //grades = allVaules.sort(sortNumber).filter(function(el,i,a){return i===a.indexOf(el)}),
-        grades = [1, 5, 10, 15,  20 , 40, 80, 100],
+        grades = [0, 50, 100, 200, 300, 500],
         labels = [];
         // loop through our density intervals and generate a label with a colored square for each interval
         var cur, next;
@@ -351,22 +329,9 @@ var initLegend = function(){
         return div;
     };
 
-legend.addTo(mymap);
-}
+    legend.addTo(mymap);
+  }
 
-
-
-
-
-/* ##### lib ###### */
-/* ##### lib ###### */
-/* ##### lib ###### */
-/* ##### lib ###### */
-/* ##### lib ###### */
-/* ##### lib ###### */
-/* ##### lib ###### */
-/* ##### lib ###### */
-/* ##### lib ###### */
 
 function getRandomInt(max) { return Math.floor(Math.random() * Math.floor(max)); }
 
@@ -390,7 +355,7 @@ function getColor(d, max) {
     return  d > max/1 ? "#FD8D3C" : 
             d > max/2 ? "#FD8D3C" : 
             d > max/5 ? "#FEB24C" : 
-            d > max/10 ? "#FEB24C" : 
+            d > max/10 ? "#FFBF69" : 
             d > max/20 ? "#FED976" : 
             d > max/50  ? "#FED976" : 
             d > max/100 ? "#FED976" : "#FFEDA0";
@@ -479,8 +444,7 @@ function tableToJson(table) {
 
  function getLastDataFromWiki(){
   //fetch WIKI to get Table
-  return fetch(urlWiki)
-  .then(function(response) {
+  return fetch(urlWiki).then(function(response) {
     return response.json();
   })
   .then(function(response) {
@@ -493,12 +457,15 @@ function tableToJson(table) {
       // struktur array[BundeslandID] = [werte....,null]
       var parsedTabe = parseWiki(tables);
       //console.log(parsedTabe)
-      var chart = new MapChart(parsedTabe, pointsLibrary);
-      chart.print();
-      
+      setTimeout(print(parsedTabe, pointsLibrary),5000);
+
   });
 }
 
+function print(parsedTabe, pointsLibrary){
+  var chart = new MapChart(parsedTabe, pointsLibrary);
+  chart.print();
+}
 
 
 function parseWiki(table){
@@ -523,23 +490,21 @@ function parseWiki(table){
   return wikiTable;
 }
 
-var daysAgo = 1;
-var arrayOfDates;
+
 
 function tryToParse (num){
-    if (parseInt(num)) return parseInt(num);
+    if (parseInt(num)) return parseInt(num.replace(".",""));
     else return null;
 };
 
 
-getLastDataFromWiki();
 
 
 var control = L.control.layers(null, null, { collapsed:false }).addTo(mymap);
 
 
 var arrayOfCity = []
-
+var heat;
 
 //add Googkle Map With cities
 var kmzParser = new L.KMZParser({
@@ -548,7 +513,7 @@ var kmzParser = new L.KMZParser({
     var gLayer = layer;
     gLayer.options.attribution = "<a href='https://www.google.com/maps/d/u/0/viewer?mid=1QvEWEo7pNQKxts6N-IT78g9NC6kOdFna&hl=en_US&ll=50.20862880313433%2C10.379803594108807&z=8&fbclid=IwAR0qySc2ukUJwog3FSfHwxVG2RUqUkvXsre5FsmCrP3f_KHBRArc_nX2mII'>Google myMaps</a>";
     
-    if(gemeldeteCity) control.addBaseLayer(gLayer, "Gemeldete Städte");
+    control.addBaseLayer(gLayer, "Gemeldete Städte");
     
     //console.log(gLayer);
     
@@ -566,17 +531,17 @@ var kmzParser = new L.KMZParser({
       }
     }
     //console.log(arrayOfCity)
-    var heat = L.heatLayer(arrayOfCity, {
-      radius: 15,
+    heat = L.heatLayer(arrayOfCity, {
+      radius: 14,
       minOpacity:0.8,
       blur:15,
       //gradient: {0.4: 'blue', 0.65: 'lime', 1: 'red'}
-      gradient: {0.4: 'gold', 0.65: 'orange', 1: 'red'}
+      gradient: {0.4: '#fdf1bb', 0.65: 'orange', 1: '#ef5d02'}
       //gradient: {0.4: 'antiquewhite', 0.65: 'beige', 1: 'white'}
     });
-    //console.log(heat)
     control.addOverlay(heat, 'Gefährdete Bereiche')
     heat.addTo(mymap);
+    console.log(heat)
     
     
     
@@ -612,6 +577,7 @@ function zoomTo(zoom){
 }
 
 function showWeltweit(){
+  mymap.removeLayer(heat)
   hideKommune();
   zoomTo(4);
 }
@@ -625,3 +591,25 @@ mymap.on('baselayerchange', function(layer){
   else if(layer.name === "Weltweit") showWeltweit();
   else if(layer.name === "Gemeldete Städte") showCity();
 })
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  document.getElementById("bar").innerText = `
+  <!-- Anfang  Widget Karte Deutschland-->\n
+    <iframe  loading="lazy" src="https://corona.vladlarichev.com" 
+    style="border:0px #ffffff none;" 
+    name="myiFrame" 
+    scrolling="no" 
+    frameborder="1" 
+    marginheight="0px" marginwidth="0px" height="400px" width="600px" 
+    allowfullscreen></iframe>
+  <!-- Ende Widget Karte -->
+  `;
+
+  updateDate()
+  printConsole()
+  setTimeout(getLastDataFromWiki,0);  
+  setTimeout(getLastDataFromRK,0);  
+  setTimeout(initLegend,0);  
+  //setTimeout(initColormap,0);  
+  setTimeout(getCurrentESRI,0);
+});
