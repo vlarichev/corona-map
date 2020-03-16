@@ -14,8 +14,10 @@ import getRssFeed from "./components/rssFeed"
 import {simpleCache} from "./components/simpleCache";
 
 
-const CORS_PROXY = process.env.CORS_PROXY;
-const _mbK = process.env.MAPBOX_KEY;
+//const CORS_PROXY = process.env.CORS_PROXY;
+const CORS_PROXY = "https://rocky-lowlands-03275.herokuapp.com/";
+//const _mbK = process.env.MAPBOX_KEY;
+const _mbK = "pk.eyJ1IjoieWFuZGV4IiwiYSI6ImNrN3VjcXAwZjA4ZWwzZG8zMXMxbno2OHoifQ.Olqh_fAunLLOb_e478wpXQ";
 
 const urlRK = "https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html";
 const bundesGeojson = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/master/2_bundeslaender/4_niedrig.geojson";
@@ -573,6 +575,7 @@ function hideKommune(){
 }
 
 function zoomTo(zoom){
+  return true;
   mymap.flyTo(MapCenter,zoom);
 }
 
