@@ -310,6 +310,7 @@ var initLegend = function(){
 
 var legend = L.control({position: 'bottomright'});
 
+
 function initColormap(){
 
 
@@ -497,15 +498,13 @@ function parseWiki(table){
 function tryToParse (num){
     if (parseInt(num)) return parseInt(num.replace(".",""));
     else return null;
-};
-
-
+}
 
 
 var control = L.control.layers(null, null, { collapsed:false }).addTo(mymap);
 
 
-var arrayOfCity = []
+var arrayOfCity = [];
 var heat;
 
 //add Googkle Map With cities
