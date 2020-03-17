@@ -14,10 +14,10 @@ import getRssFeed from "./components/rssFeed"
 import {simpleCache} from "./components/simpleCache";
 
 
-//const CORS_PROXY = process.env.CORS_PROXY;
-const CORS_PROXY = "https://rocky-lowlands-03275.herokuapp.com/";
-//const _mbK = process.env.MAPBOX_KEY;
-const _mbK = "pk.eyJ1IjoieWFuZGV4IiwiYSI6ImNrN3VjcXAwZjA4ZWwzZG8zMXMxbno2OHoifQ.Olqh_fAunLLOb_e478wpXQ";
+const CORS_PROXY = process.env.CORS_PROXY;
+//const CORS_PROXY = "https://rocky-lowlands-03275.herokuapp.com/";
+const _mbK = process.env.MAPBOX_KEY;
+//const _mbK = "pk.eyJ1IjoieWFuZGV4IiwiYSI6ImNrN3VjcXAwZjA4ZWwzZG8zMXMxbno2OHoifQ.Olqh_fAunLLOb_e478wpXQ";
 
 const urlRK = "https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html";
 const bundesGeojson = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/master/2_bundeslaender/4_niedrig.geojson";
@@ -138,7 +138,7 @@ function table2land(table){
         }
     });
     //store.gesamt = all;
-    console.log(store)
+    //console.log(store)
     setTimeout(printPoints(store),0);
     setTimeout(createAreas(store),0);
   }
@@ -164,7 +164,7 @@ function getCurrentESRI(){
     store.recovered = data.Recovered;
     store.deaths = data.Deaths;
     store.gesamt = data.Confirmed;
-    console.log(data);
+    //console.log(data);
     info.update();
   }
 
@@ -172,7 +172,7 @@ function getCurrentESRI(){
     fetch("https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true")
     .then(a =>  a.json())
     .then((b) => {
-     console.log(b)
+     //console.log(b)
      b.features.forEach(city => printCity(city.attributes));
      
      return b.features.filter(b => b.attributes.Country_Region == "Germany")[0].attributes;
@@ -280,35 +280,9 @@ document.getElementById('modal-button').addEventListener('click', function(event
   });
 
 
-var info = L.control();
-
-var initLegend = function(){
-   
-    info.onAdd = function (map) {
-        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-        this.update();
-        return this._div;
-    };
-
-    // method that we will use to update the control based on feature properties passed
-    info.update = function (props) {
-
-        this._div.innerHTML = 
-        '<h4>Erkrankte in Deutschland:</h4>' 
-        + '<div style="font-size:smaller;">Quelle WHO, weicht ggf. von RKI ab </div>'
-        + '<div style="font-weight: 700;"><br>'
-        + '<h3>'+ store.gesamt +'</h3><br>'
-        + '<div style="color: green;">Genesen - '+ store.recovered  +' ('+ Math.round(store.recovered/store.gesamt*1000)/10 +'%)'+'</div>'
-        + '</div>'
-        + '<div>Gestorben - '+ store.deaths +'</div><br>'
-        + '<div>Robert Koch Institut:</div>'
-        +  (props ? '<b>' + props.NAME_1 + '</b><br />' + (store[props.NAME_1] ? store[props.NAME_1]["krank"] :0) + ' Kranke gemeldet' : 'Bundesland auswählen')
-    };
-    
-    info.addTo(mymap); 
-}
 
 var legend = L.control({position: 'bottomright'});
+
 
 
 function initColormap(){
@@ -442,7 +416,7 @@ function tableToJson(table) {
 
   /// Wiki
 
-  const urlWiki = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-F%C3%A4lle_in_Deutschland";
+  const urlWiki = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-Epidemie_in_Deutschland";
 
 
  function getLastDataFromWiki(){
@@ -501,8 +475,38 @@ function tryToParse (num){
 }
 
 
-var control = L.control.layers(null, null, { collapsed:false }).addTo(mymap);
+var control = L.control.layers(null, null, { collapsed:true }).addTo(mymap);
 
+
+var info = L.control();
+
+var initLegend = function(){
+   
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+    // method that we will use to update the control based on feature properties passed
+    info.update = function (props) {
+
+        this._div.innerHTML = 
+        '<h4>Erkrankte in Deutschland:</h4>' 
+        + '<div class="desktopFeature" style="font-size:smaller;">Quelle WHO, weicht ggf. von RKI ab </div>'
+        + '<div style="font-weight: 700;"><br class="desktopFeature">'
+          + '<h3>'+ store.gesamt +'</h3><br class="desktopFeature">'
+          + '<div style="color: green;">Genesen - '+ store.recovered  +' ('+ Math.round(store.recovered/store.gesamt*1000)/10 +'%)'+'</div>'
+        + '</div>'
+        + '<div>Gestorben - '+ store.deaths +'</div>'
+        + '<section class="desktopFeature"><br>'
+        + '<div>Robert Koch Institut:</div>'
+        +  (props ? '<b>' + props.NAME_1 + '</b><br />' + (store[props.NAME_1] ? store[props.NAME_1]["krank"] :0) + ' Kranke gemeldet' : 'Bundesland auswählen')
+        + '</section>'
+    };
+    
+    info.addTo(mymap); 
+}
 
 var arrayOfCity = [];
 var heat;
@@ -514,7 +518,7 @@ var kmzParser = new L.KMZParser({
     var gLayer = layer;
     gLayer.options.attribution = "<a href='https://www.google.com/maps/d/u/0/viewer?mid=1QvEWEo7pNQKxts6N-IT78g9NC6kOdFna&hl=en_US&ll=50.20862880313433%2C10.379803594108807&z=8&fbclid=IwAR0qySc2ukUJwog3FSfHwxVG2RUqUkvXsre5FsmCrP3f_KHBRArc_nX2mII'>Google myMaps</a>";
     
-    control.addBaseLayer(gLayer, "Gemeldete Städte");
+    control.addBaseLayer(gLayer, "Städte");
     
     //console.log(gLayer);
     
@@ -540,9 +544,9 @@ var kmzParser = new L.KMZParser({
       gradient: {0.4: '#fdf1bb', 0.65: 'orange', 1: '#ef5d02'}
       //gradient: {0.4: 'antiquewhite', 0.65: 'beige', 1: 'white'}
     });
-    control.addOverlay(heat, 'Gefährdete Bereiche')
+    control.addOverlay(heat, 'Areale')
     heat.addTo(mymap);
-    console.log(heat)
+    //console.log(heat)
     
     
     
@@ -606,6 +610,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
     allowfullscreen></iframe>
   <!-- Ende Widget Karte -->
   `;
+
+  document.getElementById('scrollToButton').addEventListener('click', function(){
+    window.scrollBy(0, window.innerHeight);
+  })
 
   updateDate()
   printConsole()

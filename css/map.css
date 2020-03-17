@@ -12,6 +12,18 @@
     padding: 1em;
     background: white;
   }
+
+  #scrollToButton{
+    position: fixed;
+    right: 34px;
+    bottom: 80px;
+    color: rgba(102, 102, 102, 1);
+    background-color: #ffffffe3;
+    border-radius: 5px;
+    padding: 8px 22px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+
 /* 
   .leaflet-control-layers-expanded .leaflet-control-layers-list {
     font-size: medium;
@@ -19,32 +31,50 @@
     }*/
 
     #mapid {
-      height: calc(100vh - 66px);
-      top:66px;
+      height: calc(100vh - 52px);
+      top:52px;
       z-index: 0;
   }
 
   @media only screen and (min-width: 1000px) {
-
+    .supportButton{
+      bottom: 23px;
+    }
     #info-pane {
         position: absolute!important;
         left: 10px;
     }
     #chartNav {
-        display: none
+      display: none
     }
     .chart-container {
         height: 545px;
       }
   }
+
+  /* mobile only */
   @media only screen and (max-width: 900px) {
     .info.leaflet-control{
       font-size: smaller;
     }
-    span#stand {
+    #scrollToButton {
+      bottom: 55px;
+      right: 20px;
+      display: block;
+    }
+    .desktopFeature{
+      display: none;
+    }
+    .supportButton{
       position: fixed;
-      bottom: 50px;
-      color: gray!important;
+      top: 0px;
+      z-index: 100000;
+      right: 25px;
+    }
+    span#stand {
+      position: absolute;
+      top: 53px;
+      color: #f14668!important;
       left: 0px;
     }
   }

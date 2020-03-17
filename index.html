@@ -103,8 +103,8 @@
         <nav class="navbar is-fixed-top is-danger" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
                 <span class="navbar-item">Live Corona Karte. <span class ="has-text-white-ter" id="stand"> </span>
-                        <svg height="50" width="50" class="blinking">
-                            <circle cx="14" cy="27" r="5" fill="red" />
+                        <svg height="25" width="25" class="blinking">
+                            <circle cx="14" cy="13" r="5" fill="red" />
                           </svg> 
                     
                 </span> 
@@ -124,16 +124,23 @@
                         Karte
                     </a>
 
-                    <a class="navbar-item" href="#info-pane" id="chartNav">
+                    <a class="navbar-item" href="#myChart" id="chartNav">
                         Chart
                     </a>
+                    
                     <a class="navbar-item" href="#meldungen">
                         Aktuelle Meldungen
                     </a>
 
+                    <a class="navbar-item" href="#Statistik">
+                        Statistik
+                    </a>
+
+
+
 
                     <a class="navbar-item" href="#information">
-                        Informationsquellen
+                        Quellen
                     </a>
 
                     <div class="navbar-item has-dropdown is-hoverable">
@@ -160,6 +167,10 @@
                             -->
                         </div>
                     </div>
+
+
+
+      
                     <div class="navbar-end">
                         <div class="navbar-item">
                           <div class="buttons" id="modal-button">
@@ -178,71 +189,80 @@
             <div id="info-pane" class="leaflet-bar chart-container">
                 <canvas id="myChart"></canvas>
                 <div id="chart-legends"></div>
-              </div>
-    
+
+            </div>
+            <span class="navbar-item is-pulled-right supportButton">
+                <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support', '#f14668', 'D1D21ID8T');kofiwidget2.draw();</script> 
+            </span>
+            <a id="scrollToButton">
+                Weiter <i class="fas fa-arrow-alt-circle-down"></i>
+            </a>
         </section>
         <section class="section">
             <div class="content">
 
             <div> </div><br>
             <h1  class="title">Live Karte der Coronavirus Fälle in Deutschland</h1><br>
-            <p class="subtitle"> 
-                Die COVID-19-Fälle in Deutschland sind Infektionen mit der neuartigen Erkrankung COVID-19 in der Bundesrepublik Deutschland seit Ende Januar 2020. COVID-19 wird durch das Virus SARS-CoV-2 aus der Gruppe der Coronaviridae verursacht und gehört in die Gruppe der Atemwegserkrankungen. Covid-19 trat erstmals im Dezember 2019 in Wuhan, Provinz Hubei (China) auf (Coronavirus-Epidemie 2019/2020).
+                <p class="subtitle"> 
+                    Die COVID-19-Fälle in Deutschland sind Infektionen mit der neuartigen Erkrankung COVID-19 in der Bundesrepublik Deutschland seit Ende Januar 2020. COVID-19 wird durch das Virus SARS-CoV-2 aus der Gruppe der Coronaviridae verursacht und gehört in die Gruppe der Atemwegserkrankungen. Covid-19 trat erstmals im Dezember 2019 in Wuhan, Provinz Hubei (China) auf (Coronavirus-Epidemie 2019/2020).
+                    Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, früher Teil des Bundesgesundheitsamtes) in Deutschland inklusive der bereits wieder entlassenen Patienten insgesamt 534 bisher aufgetretene Fälle. Das RKI hat seine Risikobewertung für die Gesundheit der Bevölkerung in Deutschland am 2. März 2020 auf „mäßig“ hochgestuft. Demnach rechnet es „mit weiteren Fällen, Infektionsketten und Ausbrüchen“ in Deutschland sowie mit einer weltweiten Ausbreitung des Erregers. Die Infektionsketten sind bisher meist gut nachzuverfolgen und dementsprechend können Virenträger und potentielle Überträger isoliert werden (Quarantäne). Deshalb wird in Deutschland mit gleichem Stand von der offiziellen medizinischen Aufsichtsbehörde noch nicht von einer Epidemie gesprochen.
+                </p>
+                <a href="https://de.wikipedia.org/wiki/COVID-19-F%C3%A4lle_in_Deutschland">Wikipedia</a>
+            
+                <h2 class="title" id="meldungen">Live Karte der Coronavirus Fälle: Aktuelle Meldungen</h2>
+                    <p  class="subtitle">Das Robert Koch-Institut zu COVID-19 (Coronavirus SARS-CoV-2)</p>
+                    <div id="feed">
+                        <button class="button" id="lade">Letzte Meldungen abrufen?</button>
+                    </div>
+                
+                <h2 class="title" id="Statistik"> Statistik und bisherige Erkentnisse</h2>
+                
+                    <h3 class="title">Bisher ermittelter Durchnischtsalter beo Todesfällen*</h3>
+                    <p  class="subtitle">Das Robert Koch-Institut zu COVID-19 (Coronavirus SARS-CoV-2)</p>
 
-Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, früher Teil des Bundesgesundheitsamtes) in Deutschland inklusive der bereits wieder entlassenen Patienten insgesamt 534 bisher aufgetretene Fälle. Das RKI hat seine Risikobewertung für die Gesundheit der Bevölkerung in Deutschland am 2. März 2020 auf „mäßig“ hochgestuft. Demnach rechnet es „mit weiteren Fällen, Infektionsketten und Ausbrüchen“ in Deutschland sowie mit einer weltweiten Ausbreitung des Erregers. Die Infektionsketten sind bisher meist gut nachzuverfolgen und dementsprechend können Virenträger und potentielle Überträger isoliert werden (Quarantäne). Deshalb wird in Deutschland mit gleichem Stand von der offiziellen medizinischen Aufsichtsbehörde noch nicht von einer Epidemie gesprochen.
-            </p><a href="https://de.wikipedia.org/wiki/COVID-19-F%C3%A4lle_in_Deutschland">Wikipedia</a>
-            
-            <h2 class="title" id="meldungen">Live Karte der Coronavirus Fälle: Aktuelle Meldungen</h2>
-            <p  class="subtitle">Das Robert Koch-Institut zu COVID-19 (Coronavirus SARS-CoV-2)</p>
-            <div id="feed">
-                <button class="button" id="lade">Letzte Meldungen abrufen?</button> oder zurück <a href="#mapid">zur Karte</a>
-            </div>
-            
-            <h2 class="title" id="symptomen"> Symptome bei Corona Virus</h2>
-            
-            <h2 class="title" id="information">Aktuelle und wichtige Quellen</h2>
-            <h3>Allgemeine Informationen rund um Corona Virus in Deutschland</h3>
-            <a href="https://www.corona-deutschland.info/">Zentraler Forum zur Corona-Virus-Situation in Deutschland</a>
-            <h3>Links zum Thema Vorsorge bei Corona Virus</h3>
-            <ul>
-                <li><a href="https://www.rki.de/SharedDocs/FAQ/NCOV2019/FAQ_Liste.html">Vorschlägen des Robert-Koch-Instituts</a></li>
-                <li><a href="https://www.infektionsschutz.de/hygienetipps/hygiene-beim-husten-und-niesen.html#c6375">Einhaltung der Husten- und Nies-Etikette</a></li>
-                <li><a href="https://www.infektionsschutz.de/haendewaschen.html">Händehygiene</a></li>
-            </ul>
-            <h3>Interview mit OA Dr. med. René Fussen</h3>
-            <p  class="subtitle">Zentralbereich für Krankenhaushygiene und Infektiologie an der Uniklinik RWTH Aachen.</p>
-            <!--
+                <h2 class="title" id="information">Aktuelle und wichtige Quellen</h2>
+                    <h3>Allgemeine Informationen rund um Corona Virus in Deutschland</h3>
+                    <a href="https://www.corona-deutschland.info/">Zentraler Forum zur Corona-Virus-Situation in Deutschland</a>
+                    <h3>Links zum Thema Vorsorge bei Corona Virus</h3>
+                    <ul>
+                        <li><a href="https://www.rki.de/SharedDocs/FAQ/NCOV2019/FAQ_Liste.html">Vorschlägen des Robert-Koch-Instituts</a></li>
+                        <li><a href="https://www.infektionsschutz.de/hygienetipps/hygiene-beim-husten-und-niesen.html#c6375">Einhaltung der Husten- und Nies-Etikette</a></li>
+                        <li><a href="https://www.infektionsschutz.de/haendewaschen.html">Händehygiene</a></li>
+                    </ul>
+                    <h3>Interview mit OA Dr. med. René Fussen</h3>
+                    <p  class="subtitle">Zentralbereich für Krankenhaushygiene und Infektiologie an der Uniklinik RWTH Aachen.</p>
+                    <!--
 
-                <div class="has-text-centered">
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/KyJT8ndwiGM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-            -->
-            
-            <h3>Über diese Karte und FAQ</h3>
-            <p class="subtitle">Bedienung, Quellen und Hinweise</p>
+                        <div class="has-text-centered">
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/KyJT8ndwiGM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    -->
+                        
+                    <h3>Über diese Karte und FAQ</h3>
+                    <p class="subtitle">Bedienung, Quellen und Hinweise</p>
 
-            <p>
-                Diese Seite verfolgt das Ziel Euch über den aktuellsten Stand für Deutschland und den Bundesländern zu informieren. 
-            </p>
+                    <p>
+                        Diese Seite verfolgt das Ziel Euch über den aktuellsten Stand für Deutschland und den Bundesländern zu informieren. 
+                    </p>
 
-            <p>
-                Die Daten werden automatisch bei jedem Abruf aktualisiert und zeigen nur den Stand, den WHO und RKI melden. Einzelne neue Fälle können erst mit entsprechender Aktualisierung der Quellen berücksichtigt werden.  
-            </p>
-            <p>
-                Der Entwickler ist für alle Ideen und Vorschläge, wie man die Anwendung noch informativer gestalten könnte offen. Dafür ist ein Knopf "Kontakt" mit allen Kontaktinformationen vorgesehen.
-            </p>
-            <p>
-                ps. Die Anwendung wird zurzeit privat von einem Entwickler aufgebaut, der gerne nach Mitwirkenden sucht (Texte, Grafiken und natürlich Entwickler). Für die Entwickler wird der Quellcode in wenigen Tagen auf Github veröffentlicht 
-                Da die Anwendung noch auf privatem Server gehostet ist, kann es passieren, dass die teilweise ausgelastet ist
-            </p>
-            
-            <h3>Quellen</h3>
-            <p>
-                Dabei werden die letzten geprüften Zahlen vom Robert Koch Institut  (RKI) und der Weltgesundheitsorganisation WHO verwendet. Außerdem werden die Hotspots berechnet, die aus den gemeldeten Städten abgeleitet werden. (können rechts abgeschaltet werden)
-            </p>
-            
-            <h3>Diese Live Karte auf eigener Seite teilen</h3>
-            <p  class="subtitle">Sie können diese Live Karte gerne selber verwenden. Dafür kopieren Sie einfach diesen Code und fügen Sie den in Ihre HTML / Wordpress Seite ein</p>
+                    <p>
+                        Die Daten werden automatisch bei jedem Abruf aktualisiert und zeigen nur den Stand, den WHO und RKI melden. Einzelne neue Fälle können erst mit entsprechender Aktualisierung der Quellen berücksichtigt werden.  
+                    </p>
+                    <p>
+                        Der Entwickler ist für alle Ideen und Vorschläge, wie man die Anwendung noch informativer gestalten könnte offen. Dafür ist ein Knopf "Kontakt" mit allen Kontaktinformationen vorgesehen.
+                    </p>
+                    <p>
+                        ps. Die Anwendung wird zurzeit privat von einem Entwickler aufgebaut, der gerne nach Mitwirkenden sucht (Texte, Grafiken und natürlich Entwickler). Für die Entwickler wird der Quellcode in wenigen Tagen auf Github veröffentlicht 
+                        Da die Anwendung noch auf privatem Server gehostet ist, kann es passieren, dass die teilweise ausgelastet ist
+                    </p>
+                    
+                    <h3>Quellen</h3>
+                    <p>
+                        Dabei werden die letzten geprüften Zahlen vom Robert Koch Institut  (RKI) und der Weltgesundheitsorganisation WHO verwendet. Außerdem werden die Hotspots berechnet, die aus den gemeldeten Städten abgeleitet werden. (können rechts abgeschaltet werden)
+                    </p>
+                    
+                    <h3>Diese Live Karte auf eigener Seite teilen</h3>
+                    <p  class="subtitle">Sie können diese Live Karte gerne selber verwenden. Dafür kopieren Sie einfach diesen Code und fügen Sie den in Ihre HTML / Wordpress Seite ein</p>
 
             <div class="has-text-centered">
 
@@ -264,6 +284,7 @@ Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, 
         </div>
         </section>
 
+
         <div class="modal" id="infoBox">
             <div class="modal-background"></div>
             <div class="modal-card">
@@ -274,21 +295,23 @@ Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, 
               <section class="modal-card-body">
                 <div class="content">
                     Bei allen Ideen, Fragen oder Anmerkungen gerne mich kontaktieren: 
-                    <ul>
+                    <ol style="list-style-type: none;">
                         <li><a href='mailto:vladlarichev@gmail.com'>Mail</a></li>
-                        <li>WhatsApp: <a href="tel:+491704641122"> +49 170 464 1122</a></li>
+                        <li><a href="tel:+491704641122"> WhatsApp</a></li>
                         <li><a href="https://www.facebook.com/vladlarichev">Facebook</a> </li>
-                    </ul>
+                        <li><a href="https://www.xing.com/profile/Vladislav_Larichev">Xing</a> </li>
+                        <li><a href="https://www.linkedin.com/in/vladislavlarichev">LinkedIn</a> </li>
+                    </ol>
 
                     <hr>
-                    
-                    <ul>
+                    Quellen:
+                    <ol style="list-style-type: none;">
                         <li>Autor: <a href="https://vladlarichev.com">Vlad Larichev</a></li>
                         <li>Quelle 1: <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html">Robert Koch Institut</a> </li>
                         <li>Quelle 2: <a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019">WHO</a> </li>
                         <li>Quelle 3: <a href="https://de.wikipedia.org/wiki/COVID-19-F%C3%A4lle_in_Deutschland">Wikipedia</a> </li>
                         <li>Bilder: Photo by CDC on Unsplash</li>
-                    </ul>                    
+                    </ol>                    
                 </div>
               </section>
               <footer class="modal-card-foot">
