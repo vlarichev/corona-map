@@ -195,7 +195,7 @@
                 <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support', '#f14668', 'D1D21ID8T');kofiwidget2.draw();</script> 
             </span>
             <a id="scrollToButton">
-                Weiter <i class="fas fa-arrow-alt-circle-down"></i>
+                Weitere Inhalte <i class="fas fa-arrow-alt-circle-down"></i>
             </a>
         </section>
         <section class="section">
@@ -239,11 +239,29 @@
                     </div>
                 
                 <hr>
-                <h2 class="title" id="Statistik"> Statistik und bisherige Erkentnisse</h2>
-                
-                    <h3 class="title">Bisher ermittelter Durchnischtsalter beo Todesfällen*</h3>
-                    <p  class="subtitle">Das Robert Koch-Institut zu COVID-19 (Coronavirus SARS-CoV-2)</p>
+                <section class="fullPage">
 
+                    <h2 class="title" id="Statistik"> Statistik und bisherige Erkentnisse</h2>
+                    
+                    <h3 class="title">Bisher ermittelter Durchschnittsalter der Todesfälle </h3>
+                    <p  class="subtitle">Vergleich der Quellen</p>
+                    <canvas id="canvasSterblichkeit"></canvas>
+                    Quellen:
+                    <ol>
+                        <li>Fälle in Hubei, China, Januar und Februar 2020, medRxiv <a href="https://www.medrxiv.org/content/10.1101/2020.03.04.20031104v1.full.pdf">Quelle<a></a></li>
+                        <li>China CDC weekly, Stand 11. Februar 2020 <a href="https://www.medrxiv.org/content/10.1101/2020.03.04.20031104v1.full.pdf">Quelle<a></a></li>
+                        <li>Korean Centers for Disease Control and Prevention (KCDC) in Korea, 2020 <a href=https://www.cdc.go.kr/cdc_eng/">Quelle<a></a></li>
+                    </ol>
+                    <div class="has-text-centered">
+                        <p>Bild kopieren:</p>
+                        <img style="height: 100px;" loading="lazy" src="sterblichkeitCoronaFatality.png" title="Corona Sterblichkeit und Sterblichkeitsrate nach Alter" alt="Corona Sterblichkeit nach Alter und Quelle / fatality rate corona">
+                        <a class="btn button  is-primary has-tooltip-warning has-tooltip-bottom"   href="sterblichkeitCoronaFatality.png">
+                            kopieren
+                        </a>
+                    </div>
+
+                    
+                </section>
                 <hr>
                 <h2 class="title" id="information">Aktuelle und wichtige Quellen</h2>
                     <h3>Allgemeine Informationen rund um Corona Virus in Deutschland</h3>
@@ -254,6 +272,7 @@
                         <li><a href="https://www.infektionsschutz.de/hygienetipps/hygiene-beim-husten-und-niesen.html#c6375">Einhaltung der Husten- und Nies-Etikette</a></li>
                         <li><a href="https://www.infektionsschutz.de/haendewaschen.html">Händehygiene</a></li>
                     </ul>
+
                     <h3>Interview mit OA Dr. med. René Fussen</h3>
                     <p  class="subtitle">Zentralbereich für Krankenhaushygiene und Infektiologie an der Uniklinik RWTH Aachen.</p>
                     <!--

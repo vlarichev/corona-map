@@ -5,8 +5,12 @@
 <url>
 <loc>https://corona.vladlarichev.com</loc>
 <image:image>
-<image:loc>https://corona.vladlarichev.com/title.jpg</image:loc>
-<image:title>corona Virus Karte live nach Bundesländer</image:title>
+    <image:loc>https://corona.vladlarichev.com/title.jpg</image:loc>
+    <image:title>corona Virus Karte live nach Bundesländer</image:title>
+</image:image>
+<image:image>
+    <image:loc>https://corona.vladlarichev.com/sterblichkeitCoronaFatality.png</image:loc>
+    <image:title>Corona Sterblichkeit nach Alter / fatality rate corona</image:title>
 </image:image>
 </url>
 </urlset>

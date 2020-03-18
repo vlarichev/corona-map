@@ -7,7 +7,7 @@ export class MapChart {
         this.data = data;
         var labels = [];
         var sumOfArray = [];
-        const dayAgo = 3;
+        const dayAgo = 4;
         var colorArray = ["","#555e7b","#f4da93","#b576ad","#e04644","#fde47f","#7ccce5","#b8c948","#92a9db","#f4da93","#ee823f","#67e0a1","#d60a69","#ce322f","#3ed6ab","#9fbee0","#e206d0"]; 
         function returnOrgange(a){
             return true

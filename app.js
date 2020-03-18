@@ -12,7 +12,7 @@ import {MapChart} from "./components/chart"
 import getRssFeed from "./components/rssFeed"
 
 import {simpleCache} from "./components/simpleCache";
-
+import "./components/chartAlterDeadly";
 
 const CORS_PROXY = process.env.CORS_PROXY;
 //const CORS_PROXY = "https://rocky-lowlands-03275.herokuapp.com/";
@@ -101,7 +101,7 @@ function getLastDataFromRK(){
         var table = html.querySelectorAll("table")[0];
         var parsedTabe = tableToJson(table);
         allData = parsedTabe;
-        //console.log(allData);
+        console.log(allData);
         table2land(parsedTabe)
     });
 }
@@ -120,17 +120,29 @@ var store = { deaths:0, recovered:0 };
 var allVaules = [];
 var all = 0;
 
+var x = `
+"": "Thüringen"
+​"an­zahl": "74"
+​"dif­fe­renzzumvor­tag": "+23"
+​"erkr./100.000einw.": "3,5"
+​"todes­fälle": "0"
+​undefined: ""
+`
 function table2land(table){
     table.forEach(function(a){
         
         // UPD RKI institut hat wieder die Tabelle verändert: jetzt-> key: "688 (3)"
-        var val = a[Object.keys(a)[1]].split(" ");
-        var krank = parseInt(val[0].replace(".",""));
-        var tod = parseInt(val[1] ? val[1].replace("(","").replace(")",""): 0);
-//        console.log(a)  
+        var val = a[Object.keys(a)[0]].split(" ");
+        var krank = parseInt(a['an­zahl'].replace(".",""));
+        var neu = parseInt(a['dif­fe­renzzumvor­tag'] ? a['dif­fe­renzzumvor­tag'].replace("+",""): 0);
+        var tod = parseInt(a['todes­fälle'] ? a['todes­fälle'].replace("(","").replace(")",""): 0);
+        //var krank = a[Object.keys(a)[1]];
+        //var tod = a[Object.keys(a)[0]];
+        console.log(a); 
         if(!isNaN(krank)){
-          store[a.bundesland] = {
+          store[val] = {
             "krank" : krank,
+            "neu": neu,
             "tod"   : tod
           };
           allVaules.push(krank);
@@ -216,6 +228,7 @@ function printPoints(lib){
     var coordinates = pointsLibrary[bl].coord;
     var name = pointsLibrary[bl].name;
     var people = lib[name];
+    console.log(people)
     if(people)createCircles(coordinates, people, name);
   }
 }
@@ -248,6 +261,8 @@ function returnPeople(people){
 function createCircles(coord, people, name) {
   var krank = people.krank;
   var todSpan = "";
+  var newSpan = "";
+  if(people.neu>0) newSpan = `<i><span class="has-text-grey has-text-weight-light"> (+${people.neu})</span>`;
   if(people.tod>0) todSpan = `<br><div class="has-text-centered has-text-grey has-text-weight-light">${people.tod} Todesfälle</div>`;
     Bundesländer.push(L.circle(coord, {
       color: "black",
@@ -257,7 +272,7 @@ function createCircles(coord, people, name) {
       radius: returnSize(krank),
       weight: 1
     })
-    .bindTooltip(`${name} : ${krank}` + todSpan , {
+    .bindTooltip(`${name} : ${krank}`+ newSpan + todSpan , {
       permanent: true,
       direction: 'top',
       //opacity: krank > 0 ? 0.8: 0
@@ -388,8 +403,10 @@ function tableToJson(table) {
     //console.log(table)
     // first row needs to be headers
     var headers = [];
-    for (var i = 0; i < table.rows[0].cells.length; i++) {
-      headers[i] = table.rows[0].cells[i].innerHTML
+    for (var i = 0; i < table.rows[0].cells.length+2; i++) {
+      //headers[i] = i
+      
+      headers[i] = table.rows[1].cells[i].innerHTML
         .toLowerCase()
         .replace(/ /gi, "");
     }
@@ -428,7 +445,7 @@ function tableToJson(table) {
       var html_code = response["parse"]["text"]["*"];
       //var parser = new DOMParser();
       var html = parser.parseFromString(html_code, "text/html");
-      var tables = html.querySelectorAll(".wikitable tbody")[0];
+      var tables = html.querySelectorAll(".wikitable tbody")[1];
       //console.log(tables)
 
       // struktur array[BundeslandID] = [werte....,null]
@@ -595,7 +612,7 @@ function showCity(){
 mymap.on('baselayerchange', function(layer){
   if (layer.name === "Bundesländer") showKommune();
   else if(layer.name === "Weltweit") showWeltweit();
-  else if(layer.name === "Gemeldete Städte") showCity();
+  else if(layer.name === "Städte") showCity();
 })
 
 document.addEventListener("DOMContentLoaded", function(event) {
