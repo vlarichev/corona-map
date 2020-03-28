@@ -1,18 +1,23 @@
 
 //import "./serviceWorker";
 import "./css/style.css";
-import L from "leaflet";
+import "./css/map.css";
 import  './node_modules/bulma-pageloader/dist/css/bulma-pageloader.min.css';
+
+import L from "leaflet";
 import "./components/leaflet-heat";
+import mainChart from "./components/chartMainAll"
 
 import ClipboardJS from 'clipboard';
 import KMZParser from  'leaflet-kmz';
-import {MapChart} from "./components/chart"
 
-import getRssFeed from "./components/rssFeed"
+//import getRssFeed from "./components/rssFeed"
+//import {simpleCache} from "./components/simpleCache";
 
-import {simpleCache} from "./components/simpleCache";
-import "./components/chartAlterDeadly";
+import plotAlter from "./components/chartCountyAgeDeaths";
+import plotGeschlecht from "./components/chartSexAgeDeaths";
+
+
 
 const CORS_PROXY = process.env.CORS_PROXY;
 //const CORS_PROXY = "https://rocky-lowlands-03275.herokuapp.com/";
@@ -23,6 +28,7 @@ const urlRK = "https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fall
 const bundesGeojson = "https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/master/2_bundeslaender/4_niedrig.geojson";
 const esriDashboard = 'https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true';
 
+const wikiPageAdress = "COVID-19-Pandemie_in_Deutschland";
 
 const maxRadius = 50000;
 
@@ -106,7 +112,7 @@ function getLastDataFromRK(){
     });
 }
 
-function printConsole(){
+function printDevConsoleMessage(){
   console.log('%c Hi! 🙋‍♂️ ', 'background: #222; color: #bada55;font-size:22px;');
   console.log('%c Liebe Entwickler, lass uns gemeinsam eine gute API dafür aufbauen! ', 'background: #222; color: #bada55;font-size:22px;');
   console.log('%c Es wäre super z.B. ein historischen Verlauf je Bundesland dafür zu haben ', 'background: #222; color: #bada55;font-size:22px;');
@@ -115,8 +121,8 @@ function printConsole(){
 
 
 
-
-var store = { deaths:0, recovered:0 };
+var globalStore = {deaths:0, recovered:0 }
+var store = {};
 var allVaules = [];
 var all = 0;
 
@@ -138,7 +144,7 @@ function table2land(table){
         var tod = parseInt(a['todes­fälle'] ? a['todes­fälle'].replace("(","").replace(")",""): 0);
         //var krank = a[Object.keys(a)[1]];
         //var tod = a[Object.keys(a)[0]];
-        console.log(a); 
+        //console.log(a); 
         if(!isNaN(krank)){
           store[val] = {
             "krank" : krank,
@@ -173,15 +179,15 @@ function getCurrentESRI(){
     }))
   }
   function printData(data){
-    store.recovered = data.Recovered;
-    store.deaths = data.Deaths;
-    store.gesamt = data.Confirmed;
+    globalStore.recovered = data.Recovered;
+    globalStore.deaths = data.Deaths;
+    globalStore.gesamt = data.Confirmed;
     //console.log(data);
     info.update();
   }
 
 
-    fetch("https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true")
+  fetch("https://services1.arcgis.com/0MSEUqKaxRlEPj5g/arcgis/rest/services/ncov_cases/FeatureServer/1/query?f=json&where=(Confirmed%20%3E%200)%20AND%20(Recovered%3C%3E0)&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Recovered%20desc%2CCountry_Region%20asc%2CProvince_State%20asc&resultOffset=0&resultRecordCount=250&cacheHint=true")
     .then(a =>  a.json())
     .then((b) => {
      //console.log(b)
@@ -211,7 +217,7 @@ const pointsLibrary = {
     7 :   {coord: [50.608047,9.028465], name:"Hessen" },   //HE
     8 :   {coord: [53.7735,12.575558],  name:"Mecklenburg-Vorpommern" },    //MV
     9 :   {coord: [52.839842,9.076019], name:"Niedersachsen" },   //NS
-    10 :  {coord: [51.478333,7.555],    name:"Nordrhein-Westfalen" },     //NW
+    10 :  {coord: [51.478333,7.555],    name:"Nordrhein-West­falen" },     //NW
     11 :  {coord: [49.955139,7.310417], name:"Rheinland-Pfalz" },  //RP
     12 :  {coord: [49.384167,6.953611], name:"Saarland" },  //SL
     13 :  {coord: [50.929472,13.458333],name:"Sachsen" }, //SAc
@@ -224,11 +230,13 @@ var Bundesländer = [];
 var kommunenGroup;
 
 function printPoints(lib){
+  console.log(lib)
+  var blArray = Object.keys(lib);
   for (var bl in pointsLibrary) { 
     var coordinates = pointsLibrary[bl].coord;
     var name = pointsLibrary[bl].name;
-    var people = lib[name];
-    console.log(people)
+    var people = lib[blArray[bl-1]];
+    //console.log(people)
     if(people)createCircles(coordinates, people, name);
   }
 }
@@ -258,12 +266,17 @@ function returnPeople(people){
   else return people + " Fälle"; 
 }
 
+function niceNum(intNum){
+  if(intNum) return intNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return 0;
+}
+
 function createCircles(coord, people, name) {
-  var krank = people.krank;
+  var krank = niceNum(people.krank)
   var todSpan = "";
   var newSpan = "";
-  if(people.neu>0) newSpan = `<i><span class="has-text-grey has-text-weight-light"> (+${people.neu})</span>`;
-  if(people.tod>0) todSpan = `<br><div class="has-text-centered has-text-grey has-text-weight-light">${people.tod} Todesfälle</div>`;
+  //if(people.neu>0) newSpan = `<i><span class="has-text-grey has-text-weight-light"> (+${people.neu})</span>`;
+  if(people.tod>0) todSpan = `<div class="has-text-centered has-text-grey has-text-weight-light">${people.tod} Todesfälle</div>`;
     Bundesländer.push(L.circle(coord, {
       color: "black",
       fillColor: "white",
@@ -272,7 +285,7 @@ function createCircles(coord, people, name) {
       radius: returnSize(krank),
       weight: 1
     })
-    .bindTooltip(`${name} : ${krank}`+ newSpan + todSpan , {
+    .bindTooltip(`<div class="has-text-centered has-text-weight-bold"> <i class="fas fa-user"></i> ${krank}</div>`+ newSpan + todSpan , {
       permanent: true,
       direction: 'top',
       //opacity: krank > 0 ? 0.8: 0
@@ -431,68 +444,14 @@ function tableToJson(table) {
  
 
 
-  /// Wiki
-
-  const urlWiki = "https://de.wikipedia.org/w/api.php?action=parse&format=json&origin=*&page=" + "COVID-19-Epidemie_in_Deutschland";
-
-
- function getLastDataFromWiki(){
-  //fetch WIKI to get Table
-  return fetch(urlWiki).then(function(response) {
-    return response.json();
-  })
-  .then(function(response) {
-      var html_code = response["parse"]["text"]["*"];
-      //var parser = new DOMParser();
-      var html = parser.parseFromString(html_code, "text/html");
-      var tables = html.querySelectorAll(".wikitable tbody")[1];
-      //console.log(tables)
-
-      // struktur array[BundeslandID] = [werte....,null]
-      var parsedTabe = parseWiki(tables);
-      //console.log(parsedTabe)
-      setTimeout(print(parsedTabe, pointsLibrary),5000);
-
-  });
-}
-
-function print(parsedTabe, pointsLibrary){
-  var chart = new MapChart(parsedTabe, pointsLibrary);
-  chart.print();
-}
-
-
-function parseWiki(table){
-  var wikiTable = [];
-  var c = table.rows;
-  var blId = 1;
-  for(var row in c){
-    var skipSpalte = 0;
-    if (!c[row].className && typeof(c[row]) == "object"){
-      var spalten = c[row].children;
-      //console.log(spalten)
-      wikiTable[blId]=[];
-      for (var index in spalten){
-        if(skipSpalte > 0){
-          wikiTable[blId].push(tryToParse(spalten[index].innerHTML))
-        }
-        skipSpalte++;
-      }
-      blId++;
-    }
-  } 
-  return wikiTable;
-}
+  
 
 
 
-function tryToParse (num){
-    if (parseInt(num)) return parseInt(num.replace(".",""));
-    else return null;
-}
 
 
-var control = L.control.layers(null, null, { collapsed:true }).addTo(mymap);
+
+var control = L.control.layers(null, null, { collapsed: false }).addTo(mymap);
 
 
 var info = L.control();
@@ -509,13 +468,13 @@ var initLegend = function(){
     info.update = function (props) {
 
         this._div.innerHTML = 
-        '<h4>Erkrankte in Deutschland:</h4>' 
+          '<div class="has-text-danger has-text-weight-bold is-capitalized is-size-6">GESAMT:</div>' 
         + '<div class="desktopFeature" style="font-size:smaller;">Quelle WHO, weicht ggf. von RKI ab </div>'
         + '<div style="font-weight: 700;"><br class="desktopFeature">'
-          + '<h3>'+ store.gesamt +'</h3><br class="desktopFeature">'
-          + '<div style="color: green;">Genesen - '+ store.recovered  +' ('+ Math.round(store.recovered/store.gesamt*1000)/10 +'%)'+'</div>'
+          + '<h3 class="has-text-weight-bold">'+ niceNum(globalStore.gesamt) +'</h3><br class="desktopFeature">'
+          //+ '<div style="color: green;">Genesen - '+ globalStore.recovered  +' ('+ Math.round(globalStore.recovered/globalStore.gesamt*1000)/10 +'%)'+'</div>'
         + '</div>'
-        + '<div>Gestorben - '+ store.deaths +'</div>'
+        + '<div style="margin-top: -6px;" class="has-text-centered">Gestorben - '+ globalStore.deaths +'</div>'
         + '<section class="desktopFeature"><br>'
         + '<div>Robert Koch Institut:</div>'
         +  (props ? '<b>' + props.NAME_1 + '</b><br />' + (store[props.NAME_1] ? store[props.NAME_1]["krank"] :0) + ' Kranke gemeldet' : 'Bundesland auswählen')
@@ -561,7 +520,7 @@ var kmzParser = new L.KMZParser({
       gradient: {0.4: '#fdf1bb', 0.65: 'orange', 1: '#ef5d02'}
       //gradient: {0.4: 'antiquewhite', 0.65: 'beige', 1: 'white'}
     });
-    control.addOverlay(heat, 'Areale')
+    //control.addOverlay(heat, 'Areale')
     heat.addTo(mymap);
     //console.log(heat)
     
@@ -581,6 +540,7 @@ var hide = (el) => el.style.display = "none";
 
 function showKommune(){
   zoomTo(normZoom);
+  mymap.addLayer(heat);
   show(infoBoard);
   for (var legend in infoArray){
     if(typeof(infoArray[legend])== 'object') show(infoArray[legend]);
@@ -595,7 +555,6 @@ function hideKommune(){
 }
 
 function zoomTo(zoom){
-  return true;
   mymap.flyTo(MapCenter,zoom);
 }
 
@@ -615,7 +574,14 @@ mymap.on('baselayerchange', function(layer){
   else if(layer.name === "Städte") showCity();
 })
 
+function _start(func){
+  setTimeout(func,0)
+}
+
+
+/// MAIN START ///
 document.addEventListener("DOMContentLoaded", function(event) {
+  
   document.getElementById("bar").innerText = `
   <!-- Anfang  Widget Karte Deutschland-->\n
     <iframe  loading="lazy" src="https://corona.vladlarichev.com" 
@@ -633,10 +599,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
   })
 
   updateDate()
-  printConsole()
-  setTimeout(getLastDataFromWiki,0);  
-  setTimeout(getLastDataFromRK,0);  
-  setTimeout(initLegend,0);  
+  printDevConsoleMessage()
+  //_start(getLastDataFromWiki); 
+  _start(mainChart.createChart('info-pane')); 
+  _start(getLastDataFromRK);  
+  _start(initLegend);  
   //setTimeout(initColormap,0);  
-  setTimeout(getCurrentESRI,0);
+  _start(getCurrentESRI);
+  _start(plotAlter('canvasSterblichkeit'));
+  _start(plotGeschlecht('canvasGeschlecht'));
 });

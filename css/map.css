@@ -1,21 +1,18 @@
-.chart-container {
-    height: 545px;
-    
-  }
+
+  
   #chartNav {
     display: flex
 }
   #info-pane {
     position: relative;
     top: 70px;
-    z-index: 10;
-    padding: 1em;
-    background: white;
+    height: 545px;
+
   }
 
   #scrollToButton{
     position: fixed;
-    right: 34px;
+    right: 22px;
     bottom: 80px;
     color: rgba(102, 102, 102, 1);
     background-color: #ffffffe3;
@@ -43,41 +40,18 @@
     #info-pane {
         position: absolute!important;
         left: 10px;
+        min-height: 550px;
+        /*height: 70vh;*/
     }
     #chartNav {
       display: none
     }
     .chart-container {
-        height: 545px;
+        
       }
   }
 
-  /* mobile only */
-  @media only screen and (max-width: 900px) {
-    .info.leaflet-control{
-      font-size: smaller;
-    }
-    #scrollToButton {
-      bottom: 55px;
-      right: 20px;
-      display: block;
-    }
-    .desktopFeature{
-      display: none;
-    }
-    .supportButton{
-      position: fixed;
-      top: 0px;
-      z-index: 100000;
-      right: 25px;
-    }
-    span#stand {
-      position: absolute;
-      top: 53px;
-      color: #f14668!important;
-      left: 0px;
-    }
-  }
+ 
 
   
 

@@ -5,18 +5,24 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
 #nav-toggle-state:checked ~ .nav-menu {
 display: block;
 }
 
+.chartWrapper{
+    width: 80vw;
+    margin: 0 auto;
+}
+
 .info {
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,0.8);
+    padding: 4px 17px;
+    background: #fff;
+    /*background: rgba(255,255,255,0.8);*/
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
+    border: 2px solid rgba(0,0,0,0.2);
+    background-clip: padding-box;
 }
 .info h4 {
     margin: 0 0 5px;
@@ -49,3 +55,38 @@ display: block;
     top: 70px;
     left: 30px;
 }
+
+.info.leaflet-control{
+  text-align: center
+}
+
+ /* mobile only */
+ @media only screen and (max-width: 900px) {
+    .info.leaflet-control{
+      font-size: smaller;
+    }
+
+    .chartWrapper{
+        width: 90vw;
+    }
+    #scrollToButton {
+      bottom: 55px!important;
+      right: 11px!important;
+      display: block;
+    }
+    .desktopFeature{
+      display: none;
+    }
+    .supportButton{
+      position: fixed;
+      top: 0px;
+      z-index: 100000;
+      right: 25px;
+    }
+    span#stand {
+      position: absolute;
+      top: 53px;
+      color: #f14668!important;
+      left: 0px;
+    }
+  }

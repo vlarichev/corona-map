@@ -1,4 +1,4 @@
-import Chart from "../node_modules/chart.js/dist/Chart.min.js";
+import Chart from "chart.js/dist/Chart.min";
 
 var color = Chart.helpers.color;
 
@@ -29,9 +29,9 @@ var horizontalBarChartData = {
 
 };
 
-window.onload = function() {
-    var ctx = document.getElementById('canvasSterblichkeit').getContext('2d');
-    var myHorizontalBar = new Chart(ctx, {
+export default function plotAlter(domID){
+    var ctx = document.getElementById(domID).getContext('2d');
+    var horizontalBar = new Chart(ctx, {
         type: 'horizontalBar',
         data: horizontalBarChartData,
         options: {
@@ -49,7 +49,7 @@ window.onload = function() {
             },
             title: {
                 display: true,
-                text: 'Sterblichkeit durch Coronavirus nach Alter und Quelle / fatality rate by age'
+                text: 'Sterblichkeit durch Coronavirus nach Alter und Quelle / fatality rate by age '
             },
             scales: {
                 xAxes: [{
@@ -59,6 +59,8 @@ window.onload = function() {
                     }
                 }],
                 yAxes: [{
+                    categoryPercentage: .6,
+                    barPercentage: .9,
                   ticks: {
                     reverse: true,
                   }
@@ -91,7 +93,3 @@ window.onload = function() {
     });
 
 };
-
-export default function init(){
-    console.log(init);
-}

@@ -19,3 +19,6 @@ export default function getRssFeed(){
       document.getElementById('feed').appendChild(feed);
     });
   }
+
+
+  

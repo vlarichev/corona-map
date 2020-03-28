@@ -102,9 +102,9 @@
     <body>
         <nav class="navbar is-fixed-top is-danger" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
-                <span class="navbar-item">Live Corona Karte. <span class ="has-text-white-ter" id="stand"> </span>
-                        <svg height="25" width="25" class="blinking">
-                            <circle cx="14" cy="13" r="5" fill="red" />
+                <span class="navbar-item">Live Corona Karte <span class ="has-text-white-ter" id="stand"> </span>
+                        <svg height="20" width="20" class="blinking">
+                            <circle cx="12" cy="11" r="4" fill="white" />
                           </svg> 
                     
                 </span> 
@@ -186,10 +186,15 @@
 
         <section>
             <div id="mapid"></div>
-            <div id="info-pane" class="leaflet-bar chart-container">
-                <canvas id="myChart"></canvas>
-                <div id="chart-legends"></div>
+            <div id="info-pane">
+                <!--
 
+                    <span class="has-text-centered>
+                        <span style="font-size: smaller;">Länder verlgiech (wird Täglich aktualisiert)</span>
+                    </span>
+                    <canvas id="myChart"></canvas>
+                    <div id="chart-legends"></div>
+                -->
             </div>
             <span class="navbar-item is-pulled-right supportButton">
                 <script type='text/javascript' src='https://ko-fi.com/widgets/widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support', '#f14668', 'D1D21ID8T');kofiwidget2.draw();</script> 
@@ -205,7 +210,7 @@
             <h1  class="title">Live Karte der Coronavirus Fälle in Deutschland</h1><br>
                 <p class="subtitle"> 
                     Die COVID-19-Fälle in Deutschland sind Infektionen mit der neuartigen Erkrankung COVID-19 in der Bundesrepublik Deutschland seit Ende Januar 2020. COVID-19 wird durch das Virus SARS-CoV-2 aus der Gruppe der Coronaviridae verursacht und gehört in die Gruppe der Atemwegserkrankungen. Covid-19 trat erstmals im Dezember 2019 in Wuhan, Provinz Hubei (China) auf (Coronavirus-Epidemie 2019/2020).
-                    Mit Stand vom 6. März 2020, 07:00 Uhr, erfasste das Robert Koch-Institut (RKI, früher Teil des Bundesgesundheitsamtes) in Deutschland inklusive der bereits wieder entlassenen Patienten insgesamt 534 bisher aufgetretene Fälle. Das RKI hat seine Risikobewertung für die Gesundheit der Bevölkerung in Deutschland am 2. März 2020 auf „mäßig“ hochgestuft. Demnach rechnet es „mit weiteren Fällen, Infektionsketten und Ausbrüchen“ in Deutschland sowie mit einer weltweiten Ausbreitung des Erregers. Die Infektionsketten sind bisher meist gut nachzuverfolgen und dementsprechend können Virenträger und potentielle Überträger isoliert werden (Quarantäne). Deshalb wird in Deutschland mit gleichem Stand von der offiziellen medizinischen Aufsichtsbehörde noch nicht von einer Epidemie gesprochen.
+                    
                 </p>
                 <a href="https://de.wikipedia.org/wiki/COVID-19-F%C3%A4lle_in_Deutschland">Wikipedia</a>
             
@@ -243,25 +248,44 @@
 
                     <h2 class="title" id="Statistik"> Statistik und bisherige Erkentnisse</h2>
                     
-                    <h3 class="title">Bisher ermittelter Durchschnittsalter der Todesfälle </h3>
-                    <p  class="subtitle">Vergleich der Quellen</p>
-                    <canvas id="canvasSterblichkeit"></canvas>
-                    Quellen:
-                    <ol>
-                        <li>Fälle in Hubei, China, Januar und Februar 2020, medRxiv <a href="https://www.medrxiv.org/content/10.1101/2020.03.04.20031104v1.full.pdf">Quelle<a></a></li>
-                        <li>China CDC weekly, Stand 11. Februar 2020 <a href="https://www.medrxiv.org/content/10.1101/2020.03.04.20031104v1.full.pdf">Quelle<a></a></li>
-                        <li>Korean Centers for Disease Control and Prevention (KCDC) in Korea, 2020 <a href=https://www.cdc.go.kr/cdc_eng/">Quelle<a></a></li>
-                    </ol>
-                    <div class="has-text-centered">
-                        <p>Bild kopieren:</p>
-                        <img style="height: 100px;" loading="lazy" src="sterblichkeitCoronaFatality.png" title="Corona Sterblichkeit und Sterblichkeitsrate nach Alter" alt="Corona Sterblichkeit nach Alter und Quelle / fatality rate corona">
-                        <a class="btn button  is-primary has-tooltip-warning has-tooltip-bottom"   href="sterblichkeitCoronaFatality.png">
-                            kopieren
-                        </a>
-                    </div>
+                        <h3 class="title">Bisher ermittelter Durchschnittsalter der Todesfälle </h3>
+                        <p class="subtitle">Vergleich der Quellen</p>
+                        <div class="chartWrapper" style="height: 700px;">
+                            <canvas id="canvasSterblichkeit"></canvas>
+                        </div>
+                        Quellen:
+                        <ol>
+                            <li>Fälle in Hubei, China, Januar und Februar 2020, medRxiv <a href="https://www.medrxiv.org/content/10.1101/2020.03.04.20031104v1.full.pdf">Quelle<a></a></li>
+                            <li>China CDC weekly, Stand 11. Februar 2020 <a href="https://www.medrxiv.org/content/10.1101/2020.03.04.20031104v1.full.pdf">Quelle<a></a></li>
+                            <li>Korean Centers for Disease Control and Prevention (KCDC) in Korea, 2020 <a href=https://www.cdc.go.kr/cdc_eng/">Quelle<a></a></li>
+                        </ol>
+                        <hr>
+                        <div class="has-text-centered">
+                            <a class="has-tooltip-warning has-tooltip-bottom"   href="sterblichkeitCoronaFatality.png">
+                                Version zum Kopieren:<br>
+                                <img style="height: 100px;" loading="lazy" src="sterblichkeitCoronaFatality.png" title="Corona Sterblichkeit und Sterblichkeitsrate nach Alter" alt="Corona Sterblichkeit nach Alter und Quelle / fatality rate corona">
+                            </a>
+                        </div>
 
-                    
+                        <h3 class="title">Sterblichkeit durch Coronavirus Verteilung nach Alter und Geschlecht</h3>
+                        <p  class="subtitle">Ergebnisse der Studie aus Italien</p>
+                        <div class="chartWrapper"  style="height: 300px;";>
+                            <canvas id="canvasGeschlecht"></canvas>
+                        </div>
+                        Quellen
+                        <ol>
+                            <li>Report sulle caratteristiche dei pazienti deceduti positivi a COVID-19 in
+                                Italia Il presente report è basato sui dati aggiornati al 17 Marzo 2020 <a href="https://www.epicentro.iss.it/coronavirus/bollettino/Report-COVID-2019_17_marzo-v2.pdf">Quelle<a></a></li>
+                        </ol>
+                        <hr>
+                        <div class="has-text-centered">
+                            <a class="has-tooltip-warning has-tooltip-bottom"   href="sterblichkeitCoronaAlterGeschlecht.png">
+                                Version zum Kopieren:<br>
+                                <img style="height: 100px;" loading="lazy" src="sterblichkeitCoronaAlterGeschlecht.png" title="Corona Verteilung nach Geschlecht Studie Grafik Chart" alt="Corona Verteilung nach Geschlecht Studie Grafik Chart">
+                            </a>
+                        </div>
                 </section>
+                
                 <hr>
                 <h2 class="title" id="information">Aktuelle und wichtige Quellen</h2>
                     <h3>Allgemeine Informationen rund um Corona Virus in Deutschland</h3>
